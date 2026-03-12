@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -20,7 +20,7 @@ function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const sectionInnerRef = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -38,298 +38,371 @@ function Contact() {
     setTimeout(() => { setSending(false); setSubmitted(true); }, 1800);
   };
 
+  const infoRows = [
+    { icon: "✉", label: "Email", value: "hello@infinaut.com" },
+    { icon: "🌐", label: "Website", value: "www.infinaut.com" },
+    { icon: "📍", label: "Based In", value: "Global · Remote-First" },
+  ];
+
+  const fields = [
+    { id: "name",    label: "Your Name",      type: "input",    inputType: "text",  placeholder: "Jane Smith" },
+    { id: "email",   label: "Email Address",  type: "input",    inputType: "email", placeholder: "jane@company.com" },
+    { id: "message", label: "Your Message",   type: "textarea", placeholder: "Tell us about your project…" },
+  ];
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-        :root {
-          --gold: #c8a96e;
-          --gold-dim: rgba(200,169,110,0.12);
-          --gold-line: rgba(200,169,110,0.3);
-          --bg: #080808;
-          --bg2: #0d0d10;
-          --text: #f0ede8;
-          --text-muted: rgba(240,237,232,0.4);
-          --text-dim: rgba(240,237,232,0.65);
-          --border: rgba(255,255,255,0.07);
-          --border-focus: rgba(200,169,110,0.5);
-        }
-
-        /* ── Section wrapper ── */
         .contact-section {
-          background: linear-gradient(160deg, var(--bg2) 0%, var(--bg) 100%);
+          --pu:         #7c3aed;
+          --pu-bright:  #a855f7;
+          --pu-dim:     rgba(124,58,237,0.12);
+          --pu-line:    rgba(168,85,247,0.28);
+          --pu-glow:    rgba(124,58,237,0.22);
+          --bg:         #06000f;
+          --bg2:        #0d0020;
+          --text:       #f0eeff;
+          --text-muted: rgba(240,238,255,0.38);
+          --text-dim:   rgba(240,238,255,0.65);
+          --border:     rgba(168,85,247,0.12);
+          --focus:      rgba(168,85,247,0.5);
+
+          background: linear-gradient(155deg, var(--bg2) 0%, var(--bg) 60%, #0a0118 100%);
           padding: 120px 0 100px;
-          position: relative;
-          overflow: hidden;
-          font-family: 'DM Mono', monospace;
+          position: relative; overflow: hidden;
+          font-family: 'Inter', sans-serif;
         }
 
-        /* Grid texture */
-        .contact-grid-bg {
-          position: absolute;
-          inset: 0;
+        /* ── Circuit grid ── */
+        .contact-circuit-grid {
+          position: absolute; inset: 0;
           background-image:
-            linear-gradient(rgba(200,169,110,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(200,169,110,0.025) 1px, transparent 1px);
-          background-size: 64px 64px;
-          pointer-events: none;
+            linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
+          background-size: 64px 64px; pointer-events: none;
         }
 
-        /* Dynamic radial orb that follows mouse */
+        /* ── Mouse orb ── */
         .contact-orb {
-          position: absolute;
-          width: 600px;
-          height: 600px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 68%);
-          transform: translate(-50%, -50%);
-          pointer-events: none;
-          transition: left 0.8s cubic-bezier(0.2,0,0.2,1), top 0.8s cubic-bezier(0.2,0,0.2,1);
+          position: absolute; width: 640px; height: 640px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(124,58,237,0.13) 0%, rgba(168,85,247,0.05) 45%, transparent 70%);
+          transform: translate(-50%,-50%); pointer-events: none;
+          transition: left 0.9s cubic-bezier(0.2,0,0.2,1), top 0.9s cubic-bezier(0.2,0,0.2,1);
         }
 
-        /* Corner decorations */
+        /* Static ambient orbs */
+        .contact-orb-tl {
+          position: absolute; top: -100px; left: -80px;
+          width: 420px; height: 420px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(147,51,234,0.1) 0%, transparent 65%);
+          pointer-events: none; animation: floatA 7s ease-in-out infinite;
+        }
+        .contact-orb-br {
+          position: absolute; bottom: -80px; right: -60px;
+          width: 360px; height: 360px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 65%);
+          pointer-events: none; animation: floatB 9s ease-in-out infinite;
+        }
+        @keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+        @keyframes floatB { 0%,100%{transform:translateY(0)} 50%{transform:translateY(14px)} }
+
+        /* ── Circuit SVG ── */
+        .contact-circuit-svg {
+          position: absolute; inset: 0; width: 100%; height: 100%;
+          pointer-events: none; opacity: 0.15;
+        }
+
+        /* ── Corner brackets ── */
         .contact-corner {
-          position: absolute;
-          width: 48px;
-          height: 48px;
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.8s ease 0.2s;
+          position: absolute; width: 40px; height: 40px;
+          pointer-events: none; opacity: 0;
+          transition: opacity 0.8s ease 0.3s;
         }
         .contact-corner.visible { opacity: 1; }
-        .contact-corner.tl { top: 48px; left: 48px; border-top: 1px solid var(--gold-line); border-left: 1px solid var(--gold-line); }
-        .contact-corner.br { bottom: 48px; right: 48px; border-bottom: 1px solid var(--gold-line); border-right: 1px solid var(--gold-line); }
+        .contact-corner.tl { top: 40px; left: 40px; border-top: 1px solid var(--pu-line); border-left: 1px solid var(--pu-line); }
+        .contact-corner.tr { top: 40px; right: 40px; border-top: 1px solid var(--pu-line); border-right: 1px solid var(--pu-line); }
+        .contact-corner.bl { bottom: 40px; left: 40px; border-bottom: 1px solid var(--pu-line); border-left: 1px solid var(--pu-line); }
+        .contact-corner.br { bottom: 40px; right: 40px; border-bottom: 1px solid var(--pu-line); border-right: 1px solid var(--pu-line); }
 
         /* ── Inner layout ── */
         .contact-inner {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 0 48px;
-          position: relative;
-          z-index: 1;
-          display: grid;
-          grid-template-columns: 1fr 1.1fr;
-          gap: 80px;
-          align-items: start;
+          max-width: 1040px; margin: 0 auto;
+          padding: 0 48px; position: relative; z-index: 1;
+          display: grid; grid-template-columns: 1fr 1.15fr;
+          gap: 80px; align-items: start;
         }
 
         /* ── Left column ── */
         .contact-left {
-          opacity: 0;
-          transform: translateX(-28px);
+          opacity: 0; transform: translateX(-28px);
           transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
         }
         .contact-left.visible { opacity: 1; transform: translateX(0); }
 
+        /* Eyebrow pill */
         .contact-eyebrow {
-          display: flex;
-          align-items: center;
-          gap: 14px;
+          display: flex; align-items: center; gap: 10px;
           margin-bottom: 32px;
         }
-        .contact-eyebrow-line { width: 36px; height: 1px; background: var(--gold); }
+        .contact-eyebrow-pill {
+          display: flex; align-items: center; gap: 8px;
+          background: rgba(124,58,237,0.14);
+          border: 1px solid var(--pu-line);
+          border-radius: 100px; padding: 6px 14px;
+        }
+        .contact-eyebrow-dot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: var(--pu-bright);
+          animation: cDotPulse 2s ease-in-out infinite;
+        }
+        @keyframes cDotPulse {
+          0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.65)}
+        }
         .contact-eyebrow-text {
-          font-size: 10px; font-weight: 500;
-          letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+          font-size: 11px; font-weight: 500;
+          letter-spacing: 0.22em; text-transform: uppercase; color: var(--pu-bright);
         }
 
+        /* Headline */
         .contact-headline {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(40px, 4.5vw, 58px);
-          font-weight: 700;
-          line-height: 1.08;
-          color: var(--text);
-          margin-bottom: 24px;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(34px, 4.2vw, 54px);
+          font-weight: 700; line-height: 1.1;
+          color: var(--text); margin-bottom: 20px;
         }
-        .contact-headline em { font-style: italic; color: var(--gold); }
+        .contact-headline .hl {
+          background: linear-gradient(135deg, #a855f7, #7c3aed, #c084fc);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
 
         .contact-subtext {
-          font-size: 12px; font-weight: 300;
-          line-height: 1.85; color: var(--text-dim);
-          margin-bottom: 48px;
+          font-size: 13.5px; font-weight: 300; line-height: 1.85;
+          color: var(--text-dim); margin-bottom: 44px;
         }
 
-        /* Contact info rows */
-        .contact-info { display: flex; flex-direction: column; gap: 0; }
+        /* Info rows */
+        .contact-info { display: flex; flex-direction: column; }
 
         .contact-info-row {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          padding: 18px 0;
-          border-bottom: 1px solid var(--border);
-          cursor: pointer;
+          display: flex; align-items: center; gap: 16px;
+          padding: 16px 0; border-bottom: 1px solid var(--border);
+          cursor: pointer; position: relative; overflow: hidden;
           transition: background 0.25s ease;
-          position: relative;
-          overflow: hidden;
         }
-
         .contact-info-row::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0;
+          content: ''; position: absolute; bottom: 0; left: 0;
           width: 0; height: 1px;
-          background: var(--gold);
+          background: linear-gradient(90deg, var(--pu), var(--pu-bright));
           transition: width 0.4s ease;
         }
         .contact-info-row:hover::after { width: 100%; }
 
         .contact-info-icon {
-          width: 32px; height: 32px;
-          border: 1px solid var(--gold-line);
+          width: 36px; height: 36px;
+          border: 1px solid var(--pu-line);
+          border-radius: 8px;
           display: flex; align-items: center; justify-content: center;
-          font-size: 13px; color: var(--gold);
-          flex-shrink: 0;
-          transition: background 0.25s ease;
+          font-size: 14px; flex-shrink: 0;
+          background: var(--pu-dim);
+          transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
-        .contact-info-row:hover .contact-info-icon { background: var(--gold-dim); }
+        .contact-info-row:hover .contact-info-icon {
+          background: rgba(124,58,237,0.22);
+          border-color: var(--pu-bright);
+          box-shadow: 0 0 12px rgba(124,58,237,0.3);
+        }
 
         .contact-info-label {
-          font-size: 9px; letter-spacing: 0.25em;
-          text-transform: uppercase; color: var(--text-muted);
-          display: block; margin-bottom: 2px;
+          font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+          color: var(--text-muted); display: block; margin-bottom: 2px;
         }
         .contact-info-value {
-          font-size: 12.5px; font-weight: 400; color: var(--text-dim);
+          font-size: 13px; font-weight: 400; color: var(--text-dim);
           transition: color 0.25s ease;
         }
         .contact-info-row:hover .contact-info-value { color: var(--text); }
 
-        /* ── Right column — Form ── */
+        /* Social row */
+        .contact-social {
+          display: flex; gap: 10px; margin-top: 28px;
+        }
+        .contact-social-btn {
+          width: 36px; height: 36px;
+          border: 1px solid var(--border);
+          border-radius: 8px; background: transparent;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 13px; cursor: pointer; color: var(--text-muted);
+          transition: border-color 0.25s, background 0.25s, color 0.25s, box-shadow 0.25s;
+        }
+        .contact-social-btn:hover {
+          border-color: var(--pu-bright); background: var(--pu-dim);
+          color: var(--pu-bright); box-shadow: 0 0 12px rgba(124,58,237,0.25);
+        }
+
+        /* ── Right — Form ── */
         .contact-right {
-          opacity: 0;
-          transform: translateX(28px);
+          opacity: 0; transform: translateX(28px);
           transition: opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s;
         }
         .contact-right.visible { opacity: 1; transform: translateX(0); }
 
-        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        /* Form card */
+        .contact-form-card {
+          background: rgba(13,0,32,0.6);
+          border: 1px solid var(--border);
+          border-radius: 16px; padding: 40px 36px;
+          backdrop-filter: blur(12px);
+          box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,58,237,0.08);
+          position: relative; overflow: hidden;
+        }
+        /* Glow top border on form card */
+        .contact-form-card::before {
+          content: '';
+          position: absolute; top: 0; left: 0; right: 0; height: 1px;
+          background: linear-gradient(90deg, transparent, var(--pu), var(--pu-bright), transparent);
+        }
 
-        /* Field wrapper */
+        .contact-form { display: flex; flex-direction: column; gap: 22px; }
+
+        /* Field */
         .contact-field { position: relative; }
 
         .contact-field-label {
-          display: block;
-          font-size: 9px; letter-spacing: 0.28em;
-          text-transform: uppercase; color: var(--text-muted);
-          margin-bottom: 8px;
+          display: block; font-size: 11px; font-weight: 500;
+          letter-spacing: 0.1em; text-transform: uppercase;
+          color: var(--text-muted); margin-bottom: 8px;
           transition: color 0.25s ease;
         }
-        .contact-field.is-focused .contact-field-label { color: var(--gold); }
+        .contact-field.is-focused .contact-field-label { color: var(--pu-bright); }
 
         .contact-input, .contact-textarea {
           width: 100%; box-sizing: border-box;
-          background: rgba(255,255,255,0.025);
+          background: rgba(124,58,237,0.06);
           border: 1px solid var(--border);
-          color: var(--text);
-          font-family: 'DM Mono', monospace;
-          font-size: 12.5px; font-weight: 300;
-          padding: 14px 16px;
-          outline: none;
+          border-radius: 8px;
+          color: var(--text); font-family: 'Inter', sans-serif;
+          font-size: 13.5px; font-weight: 300;
+          padding: 13px 16px; outline: none; resize: none;
           transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-          resize: none;
         }
-
         .contact-input::placeholder, .contact-textarea::placeholder {
-          color: rgba(240,237,232,0.2);
+          color: rgba(240,238,255,0.18);
         }
-
         .contact-input:focus, .contact-textarea:focus {
-          border-color: var(--border-focus);
-          background: rgba(200,169,110,0.04);
-          box-shadow: 0 0 0 3px rgba(200,169,110,0.06);
+          border-color: var(--focus);
+          background: rgba(124,58,237,0.1);
+          box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
         }
 
-        /* Animated bottom bar on focus */
+        /* Focus bar */
         .contact-field-bar {
-          position: absolute;
-          bottom: 0; left: 0;
-          height: 1px; width: 0;
-          background: var(--gold);
+          position: absolute; bottom: 0; left: 8px;
+          height: 2px; width: 0; border-radius: 2px;
+          background: linear-gradient(90deg, var(--pu), var(--pu-bright));
           transition: width 0.35s ease;
         }
-        .contact-field.is-focused .contact-field-bar { width: 100%; }
+        .contact-field.is-focused .contact-field-bar { width: calc(100% - 16px); }
 
-        /* Submit button */
+        /* Submit */
         .contact-submit {
-          position: relative;
-          font-family: 'DM Mono', monospace;
-          font-size: 11px; font-weight: 500;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          color: #000;
-          background: var(--gold);
-          border: none;
-          padding: 16px 28px;
-          cursor: pointer;
-          overflow: hidden;
+          position: relative; width: 100%;
+          font-family: 'Inter', sans-serif;
+          font-size: 13px; font-weight: 600;
+          letter-spacing: 0.08em; text-transform: uppercase;
+          color: #fff;
+          background: linear-gradient(135deg, var(--pu) 0%, var(--pu-bright) 100%);
+          border: none; border-radius: 8px;
+          padding: 16px 28px; cursor: pointer; overflow: hidden;
           transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-          margin-top: 4px;
           display: flex; align-items: center; justify-content: center; gap: 10px;
+          margin-top: 4px;
         }
-
-        .contact-submit:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 28px rgba(200,169,110,0.3);
-        }
-        .contact-submit:active { transform: translateY(0); }
-        .contact-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* Shimmer sweep */
         .contact-submit::before {
-          content: '';
-          position: absolute; inset: 0;
-          background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.3) 50%, transparent 65%);
-          transform: translateX(-100%);
-          transition: transform 0.55s ease;
+          content: ''; position: absolute; inset: 0; border-radius: 8px;
+          background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.2) 50%, transparent 65%);
+          transform: translateX(-100%); transition: transform 0.55s ease;
         }
         .contact-submit:hover::before { transform: translateX(100%); }
+        .contact-submit:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 36px rgba(124,58,237,0.45);
+        }
+        .contact-submit:active { transform: translateY(0); }
+        .contact-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
         /* Spinner */
         .contact-spinner {
-          width: 14px; height: 14px;
-          border: 1.5px solid rgba(0,0,0,0.25);
-          border-top-color: #000;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
+          width: 15px; height: 15px;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top-color: #fff; border-radius: 50%;
+          animation: cSpin 0.7s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes cSpin { to { transform: rotate(360deg); } }
 
-        /* ── Success state ── */
+        /* ── Success ── */
         .contact-success {
           display: flex; flex-direction: column;
           align-items: center; justify-content: center;
-          text-align: center; gap: 20px;
-          padding: 48px 32px;
-          border: 1px solid var(--border);
-          background: rgba(200,169,110,0.03);
-          animation: successFade 0.6s ease forwards;
+          text-align: center; gap: 20px; padding: 52px 32px;
+          animation: cSuccessFade 0.6s ease forwards;
         }
-        @keyframes successFade {
-          from { opacity: 0; transform: scale(0.97); }
+        @keyframes cSuccessFade {
+          from { opacity: 0; transform: scale(0.96); }
           to   { opacity: 1; transform: scale(1); }
         }
 
-        .contact-success-mark {
-          width: 52px; height: 52px;
-          border: 1px solid var(--gold);
-          border-radius: 50%;
+        .contact-success-ring {
+          width: 64px; height: 64px; border-radius: 50%;
+          border: 1px solid var(--pu-line);
+          background: var(--pu-dim);
           display: flex; align-items: center; justify-content: center;
-          font-size: 20px; color: var(--gold);
-          animation: checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+          font-size: 24px; color: var(--pu-bright);
+          box-shadow: 0 0 32px rgba(124,58,237,0.3);
+          animation: cCheckPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
         }
-        @keyframes checkPop {
+        @keyframes cCheckPop {
           from { transform: scale(0); opacity: 0; }
           to   { transform: scale(1); opacity: 1; }
         }
 
         .contact-success-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 26px; font-weight: 600; color: var(--text);
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 26px; font-weight: 700; color: var(--text);
         }
         .contact-success-sub {
-          font-size: 11px; font-weight: 300; color: var(--text-muted);
-          line-height: 1.8; letter-spacing: 0.05em;
+          font-size: 13px; font-weight: 300; color: var(--text-muted);
+          line-height: 1.8;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+          .contact-inner {
+            grid-template-columns: 1fr;
+            gap: 48px; padding: 0 32px;
+          }
+          .contact-left { transform: translateX(0); }
+          .contact-right { transform: translateX(0); }
+          .contact-left.visible { transform: translateX(0); }
+          .contact-right.visible { transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+          .contact-section { padding: 80px 0 72px; }
+          .contact-inner { padding: 0 20px; gap: 40px; }
+          .contact-headline { font-size: clamp(28px, 7vw, 40px); }
+          .contact-form-card { padding: 28px 20px; }
+          .contact-corner.bl, .contact-corner.tr { display: none; }
+        }
+
+        @media (max-width: 480px) {
+          .contact-section { padding: 64px 0 56px; }
+          .contact-inner { padding: 0 16px; }
+          .contact-headline { font-size: clamp(26px, 8vw, 34px); }
+          .contact-form-card { padding: 24px 16px; border-radius: 12px; }
+          .contact-social { flex-wrap: wrap; }
         }
       `}</style>
 
@@ -339,40 +412,62 @@ function Contact() {
         ref={sectionRef}
         onMouseMove={handleMouseMove}
       >
-        <div className="contact-grid-bg" />
+        {/* Background layers */}
+        <div className="contact-circuit-grid" />
+        <div className="contact-orb-tl" />
+        <div className="contact-orb-br" />
         <div
           className="contact-orb"
+          ref={sectionInnerRef}
           style={{ left: `${mousePos.x}%`, top: `${mousePos.y}%` }}
         />
-        <div className={`contact-corner tl ${inView ? "visible" : ""}`} />
-        <div className={`contact-corner br ${inView ? "visible" : ""}`} />
 
-        <div className="contact-inner" ref={sectionInnerRef}>
+        {/* Circuit lines */}
+        <svg className="contact-circuit-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+          <path d="M0 150 L180 150 L180 280 L420 280" stroke="rgba(124,58,237,0.6)" strokeWidth="1" fill="none"
+            strokeDasharray="500" strokeDashoffset="500">
+            <animate attributeName="stroke-dashoffset" from="500" to="0" dur="2s" begin="0.4s" fill="freeze"/>
+          </path>
+          <path d="M1200 80 L980 80 L980 200 L750 200" stroke="rgba(168,85,247,0.5)" strokeWidth="1" fill="none"
+            strokeDasharray="460" strokeDashoffset="460">
+            <animate attributeName="stroke-dashoffset" from="460" to="0" dur="2s" begin="0.7s" fill="freeze"/>
+          </path>
+          <path d="M600 700 L600 520 L820 520 L820 420" stroke="rgba(124,58,237,0.35)" strokeWidth="1" fill="none"
+            strokeDasharray="380" strokeDashoffset="380">
+            <animate attributeName="stroke-dashoffset" from="380" to="0" dur="1.8s" begin="1s" fill="freeze"/>
+          </path>
+        </svg>
+
+        {/* Corner brackets */}
+        {["tl","tr","bl","br"].map(c => (
+          <div key={c} className={`contact-corner ${c} ${inView ? "visible" : ""}`} />
+        ))}
+
+        <div className="contact-inner">
 
           {/* ── Left ── */}
           <div className={`contact-left ${inView ? "visible" : ""}`}>
             <div className="contact-eyebrow">
-              <div className="contact-eyebrow-line" />
-              <span className="contact-eyebrow-text">Get In Touch</span>
+              <div className="contact-eyebrow-pill">
+                <div className="contact-eyebrow-dot" />
+                <span className="contact-eyebrow-text">Get In Touch</span>
+              </div>
             </div>
 
             <h2 className="contact-headline">
               Let's Build<br />
               Something<br />
-              <em>That Lasts.</em>
+              <span className="hl">That Lasts.</span>
             </h2>
 
             <p className="contact-subtext">
               Infinaut works with forward-thinking businesses ready to move
-              beyond conventional digital presence. Tell us about your vision.
+              beyond conventional digital presence. Tell us about your vision —
+              we'll build the ecosystem around it.
             </p>
 
             <div className="contact-info">
-              {[
-                { icon: "✉", label: "Email", value: "hello@infinaut.com" },
-                { icon: "◎", label: "Website", value: "www.infinaut.com" },
-                { icon: "◈", label: "Based In", value: "Global · Remote-First" },
-              ].map((row) => (
+              {infoRows.map((row) => (
                 <div className="contact-info-row" key={row.label}>
                   <div className="contact-info-icon">{row.icon}</div>
                   <div>
@@ -382,67 +477,74 @@ function Contact() {
                 </div>
               ))}
             </div>
+
+            {/* Social buttons */}
+            <div className="contact-social">
+              {["𝕏", "in", "▶", "⬡"].map((s) => (
+                <button key={s} className="contact-social-btn">{s}</button>
+              ))}
+            </div>
           </div>
 
           {/* ── Right — Form ── */}
           <div className={`contact-right ${inView ? "visible" : ""}`}>
             {submitted ? (
-              <div className="contact-success">
-                <div className="contact-success-mark">✓</div>
-                <div className="contact-success-title">Message Received.</div>
-                <p className="contact-success-sub">
-                  We'll be in touch shortly.<br />
-                  In the meantime — explore what we build.
-                </p>
+              <div className="contact-form-card">
+                <div className="contact-success">
+                  <div className="contact-success-ring">✓</div>
+                  <div className="contact-success-title">Message Received.</div>
+                  <p className="contact-success-sub">
+                    We'll be in touch shortly.<br />
+                    In the meantime — explore what we build.
+                  </p>
+                </div>
               </div>
             ) : (
-              <div className="contact-form">
-                {[
-                  { id: "name", label: "Your Name", type: "input", inputType: "text", placeholder: "Jane Smith" },
-                  { id: "email", label: "Email Address", type: "input", inputType: "email", placeholder: "jane@company.com" },
-                  { id: "message", label: "Your Message", type: "textarea", placeholder: "Tell us about your project…" },
-                ].map((field) => (
-                  <div
-                    key={field.id}
-                    className={`contact-field ${focused === field.id ? "is-focused" : ""}`}
-                  >
-                    <label className="contact-field-label">{field.label}</label>
-                    {field.type === "textarea" ? (
-                      <textarea
-                        className="contact-textarea"
-                        rows={5}
-                        placeholder={field.placeholder}
-                        value={form[field.id]}
-                        onFocus={() => setFocused(field.id)}
-                        onBlur={() => setFocused(null)}
-                        onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
-                      />
-                    ) : (
-                      <input
-                        className="contact-input"
-                        type={field.inputType}
-                        placeholder={field.placeholder}
-                        value={form[field.id]}
-                        onFocus={() => setFocused(field.id)}
-                        onBlur={() => setFocused(null)}
-                        onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
-                      />
-                    )}
-                    <div className="contact-field-bar" />
-                  </div>
-                ))}
+              <div className="contact-form-card">
+                <div className="contact-form">
+                  {fields.map((field) => (
+                    <div
+                      key={field.id}
+                      className={`contact-field ${focused === field.id ? "is-focused" : ""}`}
+                    >
+                      <label className="contact-field-label">{field.label}</label>
+                      {field.type === "textarea" ? (
+                        <textarea
+                          className="contact-textarea"
+                          rows={5}
+                          placeholder={field.placeholder}
+                          value={form[field.id]}
+                          onFocus={() => setFocused(field.id)}
+                          onBlur={() => setFocused(null)}
+                          onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
+                        />
+                      ) : (
+                        <input
+                          className="contact-input"
+                          type={field.inputType}
+                          placeholder={field.placeholder}
+                          value={form[field.id]}
+                          onFocus={() => setFocused(field.id)}
+                          onBlur={() => setFocused(null)}
+                          onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
+                        />
+                      )}
+                      <div className="contact-field-bar" />
+                    </div>
+                  ))}
 
-                <button
-                  className="contact-submit"
-                  onClick={handleSubmit}
-                  disabled={sending}
-                >
-                  {sending ? (
-                    <><div className="contact-spinner" /> Sending…</>
-                  ) : (
-                    <>Send Message <span>→</span></>
-                  )}
-                </button>
+                  <button
+                    className="contact-submit"
+                    onClick={handleSubmit}
+                    disabled={sending}
+                  >
+                    {sending ? (
+                      <><div className="contact-spinner" /> Sending…</>
+                    ) : (
+                      <>Send Message <span>→</span></>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>

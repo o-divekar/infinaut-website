@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+
 const pillars = [
   {
     label: "01",
@@ -33,7 +34,7 @@ const stats = [
   { value: "01", label: "Unified Partner" },
 ];
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -49,283 +50,423 @@ function useInView(threshold = 0.15) {
 
 function About() {
   const [sectionRef, inView] = useInView();
-  const handleMouseMove = () => {};
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const innerRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const rect = innerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setMousePos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100,
+    });
+  };
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-        :root {
-          --gold: #c8a96e;
-          --gold-dim: rgba(200,169,110,0.15);
-          --gold-line: rgba(200,169,110,0.3);
-          --bg: #080808;
-          --bg2: #0d0d10;
-          --text: #f0ede8;
-          --text-muted: rgba(240,237,232,0.45);
-          --text-dim: rgba(240,237,232,0.65);
-          --border: rgba(255,255,255,0.07);
-        }
-
+        /* ── Purple design system ── */
         .about-section {
-          background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 60%, #0a0a0e 100%);
+          --pu:       #7c3aed;
+          --pu-bright:#a855f7;
+          --pu-dim:   rgba(124,58,237,0.12);
+          --pu-line:  rgba(168,85,247,0.3);
+          --pu-glow:  rgba(124,58,237,0.18);
+          --bg:       #06000f;
+          --bg2:      #0d0020;
+          --text:     #f0eeff;
+          --text-muted: rgba(240,238,255,0.4);
+          --text-dim:   rgba(240,238,255,0.65);
+          --border:     rgba(168,85,247,0.12);
+
+          background: linear-gradient(160deg, var(--bg2) 0%, var(--bg) 55%, #0a0118 100%);
           padding: 120px 0 100px;
           position: relative;
           overflow: hidden;
-          font-family: 'DM Mono', monospace;
+          font-family: 'Inter', sans-serif;
         }
 
-        /* Geometric background texture */
-        .about-bg-grid {
-          position: absolute;
-          inset: 0;
+        /* ── Circuit grid background ── */
+        .about-circuit-grid {
+          position: absolute; inset: 0;
           background-image:
-            linear-gradient(rgba(200,169,110,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(200,169,110,0.03) 1px, transparent 1px);
+            linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
           background-size: 64px 64px;
           pointer-events: none;
         }
 
-        .about-bg-orb {
-          position: absolute;
-          top: -120px;
-          right: -80px;
-          width: 520px;
-          height: 520px;
-          background: radial-gradient(circle, rgba(200,169,110,0.055) 0%, transparent 70%);
+        /* Circuit crosshair decorations */
+        .about-crosshair {
+          position: absolute; width: 16px; height: 16px;
           pointer-events: none;
+        }
+        .about-crosshair::before,
+        .about-crosshair::after {
+          content: ''; position: absolute;
+          background: rgba(168,85,247,0.4);
+        }
+        .about-crosshair::before { width: 1px; height: 100%; left: 50%; top: 0; }
+        .about-crosshair::after  { width: 100%; height: 1px; top: 50%; left: 0; }
+        .about-crosshair.c1 { top: 80px;  left: 80px;  }
+        .about-crosshair.c2 { top: 180px; right: 120px; }
+        .about-crosshair.c3 { bottom: 120px; left: 200px; }
+
+        /* Circuit lines */
+        .about-circuit-svg {
+          position: absolute; inset: 0;
+          width: 100%; height: 100%;
+          pointer-events: none; opacity: 0.18;
+        }
+
+        /* Mouse-tracking purple orb */
+        .about-orb {
+          position: absolute;
+          width: 600px; height: 600px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(124,58,237,0.14) 0%, rgba(168,85,247,0.06) 40%, transparent 70%);
+          transform: translate(-50%,-50%); pointer-events: none;
+          transition: left 1s cubic-bezier(0.2,0,0.2,1), top 1s cubic-bezier(0.2,0,0.2,1);
+        }
+
+        /* Static top-right glow */
+        .about-orb-static {
+          position: absolute; top: -150px; right: -100px;
+          width: 500px; height: 500px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(147,51,234,0.12) 0%, transparent 65%);
+          pointer-events: none;
+          animation: orbFloat 6s ease-in-out infinite;
+        }
+        @keyframes orbFloat {
+          0%,100% { transform: translateY(0px); }
+          50%      { transform: translateY(-20px); }
         }
 
         .about-inner {
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 0 48px;
-          position: relative;
-          z-index: 1;
+          max-width: 1100px; margin: 0 auto;
+          padding: 0 48px; position: relative; z-index: 1;
         }
 
-        /* Section eyebrow label */
+        /* ── Eyebrow ── */
         .about-eyebrow {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          margin-bottom: 44px;
-          opacity: 0;
-          transform: translateY(16px);
+          display: flex; align-items: center; gap: 14px;
+          margin-bottom: 48px;
+          opacity: 0; transform: translateY(16px);
           transition: opacity 0.6s ease, transform 0.6s ease;
         }
         .about-eyebrow.visible { opacity: 1; transform: translateY(0); }
 
-        .about-eyebrow-line {
-          width: 36px;
-          height: 1px;
-          background: var(--gold);
+        .about-eyebrow-pill {
+          display: flex; align-items: center; gap: 8px;
+          background: rgba(124,58,237,0.15);
+          border: 1px solid var(--pu-line, rgba(168,85,247,0.3));
+          border-radius: 100px;
+          padding: 6px 14px;
         }
-
+        .about-eyebrow-dot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: #a855f7;
+          animation: eyebrowPulse 2s ease-in-out infinite;
+        }
+        @keyframes eyebrowPulse {
+          0%,100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.5; transform: scale(0.7); }
+        }
         .about-eyebrow-text {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          font-weight: 500;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: var(--gold);
+          font-size: 11px; font-weight: 500;
+          letter-spacing: 0.22em; text-transform: uppercase;
+          color: #a855f7;
         }
 
-        /* Top split layout */
+        /* ── Header split ── */
         .about-header {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 64px;
-          align-items: end;
+          gap: 64px; align-items: end;
           margin-bottom: 72px;
         }
 
         .about-headline {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(44px, 5.5vw, 68px);
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(38px, 5vw, 62px);
           font-weight: 700;
-          line-height: 1.05;
-          color: var(--text);
-          opacity: 0;
-          transform: translateY(24px);
+          line-height: 1.08;
+          color: var(--text, #f0eeff);
+          opacity: 0; transform: translateY(24px);
           transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
         }
         .about-headline.visible { opacity: 1; transform: translateY(0); }
 
-        .about-headline em {
-          font-style: italic;
-          color: var(--gold);
+        .about-headline .hl-purple {
+          background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #c084fc 100%);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .about-desc-col {
-          opacity: 0;
-          transform: translateY(24px);
+          opacity: 0; transform: translateY(24px);
           transition: opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s;
         }
         .about-desc-col.visible { opacity: 1; transform: translateY(0); }
 
         .about-desc {
-          font-family: 'DM Mono', monospace;
-          font-size: 13.5px;
-          font-weight: 300;
-          line-height: 1.85;
-          color: var(--text-dim);
-          margin-bottom: 28px;
+          font-size: 14px; font-weight: 300; line-height: 1.85;
+          color: var(--text-dim, rgba(240,238,255,0.65));
+          margin-bottom: 24px;
         }
 
         .about-tagline {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 16px;
-          font-style: italic;
-          color: var(--gold);
-          letter-spacing: 0.04em;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 15px; font-weight: 500;
+          color: #a855f7;
           padding-left: 16px;
-          border-left: 1px solid var(--gold-line);
+          border-left: 2px solid rgba(168,85,247,0.4);
+          line-height: 1.6;
         }
 
-        /* Stats row */
+        /* ── Stats row ── */
         .about-stats {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          border: 1px solid var(--border);
+          border: 1px solid var(--border, rgba(168,85,247,0.12));
           margin-bottom: 72px;
-          opacity: 0;
-          transform: translateY(20px);
+          opacity: 0; transform: translateY(20px);
           transition: opacity 0.7s ease 0.35s, transform 0.7s ease 0.35s;
+          border-radius: 2px;
+          overflow: hidden;
         }
         .about-stats.visible { opacity: 1; transform: translateY(0); }
 
         .about-stat {
-          padding: 28px 32px;
-          border-right: 1px solid var(--border);
-          position: relative;
-          overflow: hidden;
+          padding: 28px 24px;
+          border-right: 1px solid var(--border, rgba(168,85,247,0.12));
+          position: relative; overflow: hidden;
           transition: background 0.3s ease;
+          cursor: default;
         }
         .about-stat:last-child { border-right: none; }
-        .about-stat:hover { background: rgba(200,169,110,0.04); }
+        .about-stat:hover { background: rgba(124,58,237,0.08); }
+
+        .about-stat::before {
+          content: '';
+          position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, #7c3aed, #a855f7);
+          transform: scaleX(0); transform-origin: left;
+          transition: transform 0.4s ease;
+        }
+        .about-stat:hover::before { transform: scaleX(1); }
 
         .about-stat-value {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 38px;
-          font-weight: 600;
-          color: var(--text);
-          line-height: 1;
-          margin-bottom: 8px;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 36px; font-weight: 700;
+          background: linear-gradient(135deg, #f0eeff, #a855f7);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1; margin-bottom: 8px;
         }
 
         .about-stat-label {
-          font-family: 'DM Mono', monospace;
-          font-size: 9.5px;
-          font-weight: 400;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--text-muted);
+          font-size: 9.5px; font-weight: 500;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          color: var(--text-muted, rgba(240,238,255,0.4));
         }
 
-        /* Pillars grid */
-        .about-pillars-label {
-          font-family: 'DM Mono', monospace;
-          font-size: 9.5px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: var(--text-muted);
+        /* ── Pillars ── */
+        .about-pillars-header {
+          display: flex; align-items: center; gap: 16px;
           margin-bottom: 24px;
-          opacity: 0;
-          transition: opacity 0.5s ease 0.4s;
+          opacity: 0; transition: opacity 0.5s ease 0.4s;
         }
-        .about-pillars-label.visible { opacity: 1; }
+        .about-pillars-header.visible { opacity: 1; }
+
+        .about-pillars-label {
+          font-size: 10px; font-weight: 500;
+          letter-spacing: 0.3em; text-transform: uppercase;
+          color: var(--text-muted, rgba(240,238,255,0.4));
+        }
+        .about-pillars-line {
+          flex: 1; height: 1px;
+          background: linear-gradient(90deg, rgba(124,58,237,0.3), transparent);
+        }
 
         .about-pillars {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: 1px;
-          background: var(--border);
+          background: rgba(124,58,237,0.15);
+          border-radius: 2px; overflow: hidden;
         }
 
         .about-pillar {
-          background: var(--bg);
-          padding: 32px 28px;
-          position: relative;
-          overflow: hidden;
+          background: var(--bg, #06000f);
+          padding: 32px 24px;
+          position: relative; overflow: hidden;
           cursor: default;
           transition: background 0.3s ease;
-          opacity: 0;
-          transform: translateY(20px);
+          opacity: 0; transform: translateY(20px);
         }
+        .about-pillar.visible { opacity: 1; transform: translateY(0); }
+        .about-pillar:hover { background: #110030; }
 
-        .about-pillar.visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        .about-pillar:hover { background: #0f0f12; }
-
+        /* Purple glow top bar on hover */
         .about-pillar::before {
           content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 1px;
-          background: linear-gradient(90deg, var(--gold), transparent);
-          transform: scaleX(0);
-          transform-origin: left;
+          position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, #7c3aed, #a855f7, transparent);
+          transform: scaleX(0); transform-origin: left;
           transition: transform 0.4s ease;
         }
-
         .about-pillar:hover::before { transform: scaleX(1); }
 
-        .about-pillar-symbol {
-          font-size: 22px;
-          color: var(--gold);
-          margin-bottom: 20px;
-          display: block;
-          opacity: 0.8;
+        /* Glow behind symbol on hover */
+        .about-pillar::after {
+          content: '';
+          position: absolute; top: 20px; left: 16px;
+          width: 48px; height: 48px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%);
+          opacity: 0; transition: opacity 0.3s ease;
         }
+        .about-pillar:hover::after { opacity: 1; }
+
+        .about-pillar-symbol {
+          font-size: 22px; color: #a855f7;
+          margin-bottom: 20px; display: block;
+          transition: transform 0.3s ease;
+          position: relative; z-index: 1;
+        }
+        .about-pillar:hover .about-pillar-symbol { transform: scale(1.15); }
 
         .about-pillar-num {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px;
-          letter-spacing: 0.25em;
-          color: var(--text-muted);
-          margin-bottom: 10px;
-          display: block;
+          font-size: 9px; letter-spacing: 0.28em;
+          color: rgba(168,85,247,0.5);
+          margin-bottom: 10px; display: block;
         }
 
         .about-pillar-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 20px;
-          font-weight: 600;
-          color: var(--text);
-          margin-bottom: 12px;
-          line-height: 1.2;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 17px; font-weight: 600;
+          color: var(--text, #f0eeff);
+          margin-bottom: 12px; line-height: 1.3;
         }
 
         .about-pillar-desc {
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          font-weight: 300;
-          line-height: 1.75;
-          color: var(--text-muted);
+          font-size: 11.5px; font-weight: 300; line-height: 1.75;
+          color: var(--text-muted, rgba(240,238,255,0.4));
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+          .about-inner { padding: 0 32px; }
+          .about-header { gap: 40px; }
+          .about-pillars { grid-template-columns: repeat(2, 1fr); }
+          .about-stats { grid-template-columns: repeat(2, 1fr); }
+          .about-stats .about-stat:nth-child(2) { border-right: none; }
+          .about-stats .about-stat:nth-child(3) { border-top: 1px solid rgba(168,85,247,0.12); }
+          .about-stats .about-stat:nth-child(4) { border-top: 1px solid rgba(168,85,247,0.12); border-right: none; }
+        }
+
+        @media (max-width: 768px) {
+          .about-section { padding: 80px 0 72px; }
+          .about-inner { padding: 0 20px; }
+
+          .about-header {
+            grid-template-columns: 1fr;
+            gap: 28px; margin-bottom: 48px;
+          }
+
+          .about-headline { font-size: clamp(32px, 8vw, 44px); }
+
+          .about-stats {
+            grid-template-columns: repeat(2, 1fr);
+            margin-bottom: 48px;
+          }
+          .about-stats .about-stat:nth-child(2) { border-right: none; }
+          .about-stats .about-stat:nth-child(3),
+          .about-stats .about-stat:nth-child(4) {
+            border-top: 1px solid rgba(168,85,247,0.12);
+          }
+          .about-stats .about-stat:nth-child(4) { border-right: none; }
+
+          .about-stat { padding: 20px 16px; }
+          .about-stat-value { font-size: 28px; }
+
+          .about-pillars {
+            grid-template-columns: repeat(2, 1fr);
+          }
+
+          .about-pillar { padding: 24px 18px; }
+        }
+
+        @media (max-width: 480px) {
+          .about-section { padding: 64px 0 56px; }
+          .about-inner { padding: 0 16px; }
+
+          .about-eyebrow { margin-bottom: 28px; }
+
+          .about-headline { font-size: clamp(28px, 9vw, 38px); }
+
+          .about-stats { grid-template-columns: repeat(2, 1fr); }
+
+          .about-pillars { grid-template-columns: 1fr; }
+
+          .about-pillar { padding: 20px 16px; }
+
+          .about-crosshair { display: none; }
         }
       `}</style>
 
-      <section id="about" className="about-section" ref={sectionRef} onMouseMove={handleMouseMove}>
-        <div className="about-bg-grid" />
-        <div className="about-bg-orb" />
+      <section
+        id="about"
+        className="about-section"
+        ref={sectionRef}
+        onMouseMove={handleMouseMove}
+      >
+        {/* Background layers */}
+        <div className="about-circuit-grid" />
+        <div className="about-orb-static" />
+        <div
+          className="about-orb"
+          ref={innerRef}
+          style={{ left: `${mousePos.x}%`, top: `${mousePos.y}%` }}
+        />
+
+        {/* Circuit crosshairs */}
+        <div className="about-crosshair c1" />
+        <div className="about-crosshair c2" />
+        <div className="about-crosshair c3" />
+
+        {/* Animated circuit SVG lines */}
+        <svg className="about-circuit-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+          <path d="M0 200 L200 200 L200 300 L500 300" stroke="rgba(124,58,237,0.5)" strokeWidth="1" fill="none"
+            strokeDasharray="600" strokeDashoffset="600">
+            <animate attributeName="stroke-dashoffset" from="600" to="0" dur="2.5s" begin="0.5s" fill="freeze"/>
+          </path>
+          <path d="M1440 100 L1200 100 L1200 250 L900 250" stroke="rgba(168,85,247,0.4)" strokeWidth="1" fill="none"
+            strokeDasharray="500" strokeDashoffset="500">
+            <animate attributeName="stroke-dashoffset" from="500" to="0" dur="2s" begin="0.8s" fill="freeze"/>
+          </path>
+          <path d="M300 600 L300 450 L600 450 L600 380" stroke="rgba(124,58,237,0.3)" strokeWidth="1" fill="none"
+            strokeDasharray="400" strokeDashoffset="400">
+            <animate attributeName="stroke-dashoffset" from="400" to="0" dur="2s" begin="1s" fill="freeze"/>
+          </path>
+        </svg>
 
         <div className="about-inner">
 
           {/* Eyebrow */}
           <div className={`about-eyebrow ${inView ? "visible" : ""}`}>
-            <div className="about-eyebrow-line" />
-            <span className="about-eyebrow-text">About Infinaut</span>
+            <div className="about-eyebrow-pill">
+              <div className="about-eyebrow-dot" />
+              <span className="about-eyebrow-text">About Infinaut</span>
+            </div>
           </div>
 
-          {/* Split headline + description */}
+          {/* Header split */}
           <div className="about-header">
             <h2 className={`about-headline ${inView ? "visible" : ""}`}>
               We Build<br />
-              <em>Intelligent</em><br />
+              <span className="hl-purple">Intelligent</span><br />
               Ecosystems.
             </h2>
 
@@ -357,8 +498,9 @@ function About() {
           </div>
 
           {/* Pillars */}
-          <div className={`about-pillars-label ${inView ? "visible" : ""}`}>
-            Our Intersection
+          <div className={`about-pillars-header ${inView ? "visible" : ""}`}>
+            <span className="about-pillars-label">Our Intersection</span>
+            <div className="about-pillars-line" />
           </div>
 
           <div className="about-pillars">
@@ -366,7 +508,9 @@ function About() {
               <div
                 key={p.label}
                 className={`about-pillar ${inView ? "visible" : ""}`}
-                style={{ transition: `opacity 0.6s ease ${0.45 + i * 0.1}s, transform 0.6s ease ${0.45 + i * 0.1}s, background 0.3s ease` }}
+                style={{
+                  transition: `opacity 0.6s ease ${0.45 + i * 0.1}s, transform 0.6s ease ${0.45 + i * 0.1}s, background 0.3s ease`
+                }}
               >
                 <span className="about-pillar-symbol">{p.symbol}</span>
                 <span className="about-pillar-num">{p.label}</span>
@@ -377,7 +521,6 @@ function About() {
           </div>
 
         </div>
-        
       </section>
     </>
   );
