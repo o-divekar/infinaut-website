@@ -20,7 +20,7 @@ const problems = [
     symbol: "⬡",
     title: "Fragmented Tools",
     sub: "Disconnected platforms",
-    body: "Disconnected platforms with no unified digital strategy or infrastructure.",
+    body: "Multiple tools with no clear system or structure.",
     stat: "3×",
     statLabel: "more tools, half the efficiency",
   },
@@ -29,7 +29,7 @@ const problems = [
     symbol: "◎",
     title: "Outdated Identity",
     sub: "Brand misalignment",
-    body: "Branding that no longer communicates the company's true value or vision.",
+    body: "Your Brand no longer reflects your vlaue or direction.",
     stat: "2.4×",
     statLabel: "higher bounce rates",
   },
@@ -38,7 +38,7 @@ const problems = [
     symbol: "△",
     title: "No AI Integration",
     sub: "Falling behind",
-    body: "Businesses missing automation and intelligence that competitors have.",
+    body: "Manual work where automation should exist.",
     stat: "60%",
     statLabel: "of competitors use AI today",
   },
@@ -47,7 +47,7 @@ const problems = [
     symbol: "◈",
     title: "Stalled Growth",
     sub: "No scale system",
-    body: "Digital activity without systematic approach to conversion or scale.",
+    body: "No system to scale, optimize, or convert consistently  .",
     stat: "∞",
     statLabel: "potential left on the table",
   },
@@ -361,23 +361,28 @@ function Problem() {
 
         /* Number */
         .prob-card-num {
-          font-size: 10px; letter-spacing: 0.3em;
+          font-size: 12px; letter-spacing: 0.3em;
           text-transform: uppercase; 
           color: var(--text-muted);
           margin-bottom: 24px; display: block;
         }
 
-        /* Symbol */
+        /* Symbol - FIXED: No movement, only glow on hover */
         .prob-card-symbol {
           font-size: 32px; 
           color: var(--pu-light);
           opacity: 0.7; display: block;
           margin-bottom: 24px;
-          transition: all 0.25s ease;
+          transition: opacity 0.25s ease, text-shadow 0.25s ease;
+          /* No transform properties - completely static position */
         }
         .prob-card:hover .prob-card-symbol { 
           opacity: 1; 
-          transform: scale(1.1) rotate(5deg);
+          color: #c084fc;
+          text-shadow: 
+            0 0 8px rgba(168,85,247,0.6),
+            0 0 16px rgba(124,58,237,0.4),
+            0 0 24px rgba(168,85,247,0.3);
         }
 
         /* Title */
@@ -397,7 +402,7 @@ function Problem() {
         }
 
         .prob-card-body {
-          font-size: 13px; font-weight: 300;
+          font-size: 15px; font-weight: 300;
           line-height: 1.7; color: var(--text-muted);
           margin-bottom: 32px;
         }
@@ -419,6 +424,7 @@ function Problem() {
         }
         .prob-card:hover .prob-card-stat-value { 
           color: var(--pu-light);
+          text-shadow: 0 0 12px rgba(168,85,247,0.3);
         }
 
         .prob-card-stat-label {
@@ -537,9 +543,10 @@ function Problem() {
 
             <div className={`prob-right-col ${inView ? "visible" : ""}`}>
               <p className="prob-desc">
-                They have a digital presence — but not a digital system.
-                Fragmented tools, misaligned branding, and absent AI create
-                a widening gap between where they are and where they need to be.
+                Most businesses have a digital presence but not a system.
+                Disconnected tools, weak branding, and lack of 
+                automation<br/> create a gap between where they are 
+                and where they want to be.
               </p>
               <div className="prob-warning">
                 <span className="prob-warning-icon">⚠</span>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SEO from "./SEO";
 
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
@@ -19,6 +20,7 @@ function Contact() {
   const [focused, setFocused] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState(null);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const sectionInnerRef = useRef(null);
@@ -32,15 +34,45 @@ function Contact() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
+    
     setSending(true);
-    setTimeout(() => { setSending(false); setSubmitted(true); }, 1800);
+    setError(null);
+
+    try {
+      const response = await fetch('https://formsubmit.co/ajax/teaminfinaut@gmail.com', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          _subject: `New Contact from ${form.name}`,
+          _template: 'table'
+        })
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        throw new Error(result.message || 'Failed to send message');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSending(false);
+    }
   };
 
   const infoRows = [
-    { icon: "✉", label: "Email", value: "hello@infinaut.com" },
-    { icon: "🌐", label: "Website", value: "www.infinaut.com" },
+    { icon: "✉", label: "Email", value: "hello@infinaut.com", action: "mailto:hello@infinaut.com" },
+    { icon: "🌐", label: "Website", value: "www.infinaut.com", action: "https://www.infinaut.com" },
     { icon: "📍", label: "Based In", value: "Global · Remote-First" },
   ];
 
@@ -68,6 +100,7 @@ function Contact() {
           --text-dim:   rgba(240,238,255,0.65);
           --border:     rgba(168,85,247,0.12);
           --focus:      rgba(168,85,247,0.5);
+          --error:      #ff4d4d;
 
           background: linear-gradient(155deg, var(--bg2) 0%, var(--bg) 60%, #0a0118 100%);
           padding: 120px 0 100px;
@@ -306,6 +339,14 @@ function Contact() {
         }
         .contact-field.is-focused .contact-field-bar { width: calc(100% - 16px); }
 
+        /* Error message */
+        .contact-error {
+          color: var(--error);
+          font-size: 12px;
+          margin-top: -10px;
+          padding: 0 8px;
+        }
+
         /* Submit */
         .contact-submit {
           position: relative; width: 100%;
@@ -468,7 +509,11 @@ function Contact() {
 
             <div className="contact-info">
               {infoRows.map((row) => (
-                <div className="contact-info-row" key={row.label}>
+                <div 
+                  className="contact-info-row" 
+                  key={row.label}
+                  onClick={() => row.action && window.open(row.action, '_blank')}
+                >
                   <div className="contact-info-icon">{row.icon}</div>
                   <div>
                     <span className="contact-info-label">{row.label}</span>
@@ -533,10 +578,15 @@ function Contact() {
                     </div>
                   ))}
 
+                  {error && (
+                    <div className="contact-error">{error}</div>
+                  )}
+
                   <button
                     className="contact-submit"
                     onClick={handleSubmit}
-                    disabled={sending}
+                    disabled={sending || !form.name || !form.email || !form.message}
+                    aria-label="Start a conversation with our team"
                   >
                     {sending ? (
                       <><div className="contact-spinner" /> Sending…</>
@@ -551,7 +601,13 @@ function Contact() {
 
         </div>
       </section>
+        <SEO 
+        title="Contact- Infinaut"
+        description="Infinaut works with forward-thinking businesses ready to move beyond conventional digital presence. Tell us about your vision — we'll build the ecosystem around it."
+      />
+      {/* rest of your component */}
     </>
+    
   );
 }
 

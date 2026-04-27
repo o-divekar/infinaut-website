@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
+import SEO from "./SEO";
 function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -20,8 +20,10 @@ const services = [
     symbol: "◈",
     title: "Branding & Identity",
     sub: "Visual Intelligence",
-    body: "Complete visual language systems — logo, typography, color, motion, and brand communication strategy built with precision.",
-    tags: ["Logo Systems", "Brand Guidelines", "Typography", "Motion Identity"],
+    body: "We build visual systems that dene how your brand looks, feels, and communicates across every touchpoint.",
+    tags: ["Logo & Visual Identity", "Brand Guidelines", "Social Media Creatives", "Marketing & Ad Creatives","Ad Shoots & Product Shoots",
+            "Typography & Color Systems",
+            "Motion Graphics & Visual Assets"],
     stat: "∞", statLabel: "Brand touchpoints unified",
     accent: "#a855f7",
   },
@@ -30,8 +32,15 @@ const services = [
     symbol: "⬡",
     title: "Web & Product Dev",
     sub: "Engineering Depth",
-    body: "Custom websites, web applications, and digital products engineered for performance, scalability, and long-term maintainability.",
-    tags: ["Custom Websites", "Web Apps", "E-Commerce", "CMS Integration"],
+    body: "Scalable digital products and platforms built for performance, usability, and long-term growth.",
+    tags: ["Website Design & Development",
+            "Landing Pages",
+            "UI/UX Design",
+            "Web Applications",
+            "Mobile App Development",
+            "Custom Software Development",
+            "E-commerce Solutions",
+            "CMS Integration"],
     stat: "10×", statLabel: "Faster than template builds",
     accent: "#7c3aed",
   },
@@ -40,8 +49,13 @@ const services = [
     symbol: "◎",
     title: "AI & Automation",
     sub: "Intelligent Systems",
-    body: "Intelligent workflows, AI chatbots, data pipelines, and automation systems that help businesses operate at a fundamentally new level.",
-    tags: ["AI Chatbots", "Workflow Automation", "Data Pipelines", "Predictive Systems"],
+    body: "Intelligent systems that reduce manual work, improve effciency, and scale operations.",
+    tags: ["AI Chatbots & Assistants",
+"Work ow Automation",
+"AI Content Systems",
+"Data Processing & Pipelines",
+"Business Process Automation",
+"Custom AI Integrations"],
     stat: "60%", statLabel: "Reduction in manual task load",
     accent: "#c084fc",
   },
@@ -50,8 +64,13 @@ const services = [
     symbol: "△",
     title: "Growth Strategy",
     sub: "Systematic Scale",
-    body: "SEO architecture, content systems, analytics, and conversion-focused digital growth planning that compounds over time.",
-    tags: ["SEO Architecture", "Content Strategy", "Analytics", "Funnel Design"],
+    body: "Data-driven strategies that increase visibility,engagement, and conversions over time.",
+    tags: ["SEO & Search Optimization",
+            "Content Strategy",
+            "Social Media Strategy",
+            "Performance Marketing",
+            "Funnel Design",
+            "Analytics & Optimization"],
     stat: "3×", statLabel: "Average growth acceleration",
     accent: "#a855f7",
   },
@@ -60,8 +79,13 @@ const services = [
     symbol: "⊕",
     title: "Digital Infrastructure",
     sub: "Foundation First",
-    body: "CMS, hosting, domain architecture, and full backend digital setups — the invisible foundation every great digital product needs.",
-    tags: ["CMS Setup", "Cloud Hosting", "Domain Architecture", "Backend Systems"],
+    body: "The backend systems that ensure everything runs smoothly, securely, and at scale.",
+    tags: ["Hosting & Deployment",
+            "Cloud Infrastructure",
+            "Domain & Server Setup",
+            "Backend Systems",
+            "API Integrations",
+            "Security & Maintenanc"],
     stat: "99.9%", statLabel: "Uptime engineered by design",
     accent: "#7c3aed",
   },
@@ -650,9 +674,15 @@ function Services() {
             </div>
             <button className="svc-bottom-cta">View All Services →</button>
           </div>
-
+        
         </div>
       </section>
+       <SEO 
+        title="Our Services - AI, Technology & Creative Solutions"
+        description="Explore our comprehensive digital services including AI development, technology consulting, and creative design."
+      />
+      {/* rest of your component */}
+
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SEO from "./SEO";
 
 const pillars = [
   {
@@ -28,12 +29,34 @@ const pillars = [
 ];
 
 const stats = [
-  { value: "∞", label: "Scalability by Design" },
-  { value: "3×", label: "Faster Operations" },
-  { value: "60%", label: "Task Automation" },
-  { value: "01", label: "Unified Partner" },
+  { value: "25+", label: "Digital Projects" },
+  { value: "15+", label: "Clients & Collaborations" },
+  { value: "60%", label: "Workflow Efficiency" },
+  { value: "3x", label: "Execution Speed" },
 ];
 
+const processSteps = [
+  {
+    step: "01",
+    title: "Understand the Business",
+    desc: "We analyze your brand, audience, and current digital presence to identify real growth opportunities.",
+  },
+  {
+    step: "02",
+    title: "Design the System",
+    desc: "We create a structured plan combining design, technology, and workflows tailored to your business.",
+  },
+  {
+    step: "03",
+    title: "Build & Integrate",
+    desc: "We develop and implement everything — from brand to platform to automation systems.",
+  },
+  {
+    step: "04",
+    title: "Optimize & Scale",
+    desc: "We continuously improve performance, efficiency, and growth over time.",
+  },
+];
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -211,14 +234,14 @@ function About() {
         .about-desc-col.visible { opacity: 1; transform: translateY(0); }
 
         .about-desc {
-          font-size: 14px; font-weight: 300; line-height: 1.85;
+          font-size: 18px; font-weight: 300; line-height: 1.85;
           color: var(--text-dim, rgba(240,238,255,0.65));
           margin-bottom: 24px;
         }
 
         .about-tagline {
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 15px; font-weight: 500;
+          font-size: 19px; font-weight: 500;
           color: #a855f7;
           padding-left: 16px;
           border-left: 2px solid rgba(168,85,247,0.4);
@@ -296,6 +319,7 @@ function About() {
           gap: 1px;
           background: rgba(124,58,237,0.15);
           border-radius: 2px; overflow: hidden;
+          margin-bottom: 80px;
         }
 
         .about-pillar {
@@ -319,23 +343,23 @@ function About() {
         }
         .about-pillar:hover::before { transform: scaleX(1); }
 
-        /* Glow behind symbol on hover */
-        .about-pillar::after {
-          content: '';
-          position: absolute; top: 20px; left: 16px;
-          width: 48px; height: 48px; border-radius: 50%;
-          background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%);
-          opacity: 0; transition: opacity 0.3s ease;
-        }
-        .about-pillar:hover::after { opacity: 1; }
-
         .about-pillar-symbol {
-          font-size: 22px; color: #a855f7;
-          margin-bottom: 20px; display: block;
-          transition: transform 0.3s ease;
-          position: relative; z-index: 1;
+          font-size: 22px; 
+          color: #a855f7;
+          margin-bottom: 20px; 
+          display: block;
+          position: relative; 
+          z-index: 1;
+          transition: text-shadow 0.3s ease, color 0.3s ease;
         }
-        .about-pillar:hover .about-pillar-symbol { transform: scale(1.15); }
+        
+        .about-pillar:hover .about-pillar-symbol {
+          color: #c084fc;
+          text-shadow: 
+            0 0 8px rgba(168,85,247,0.6),
+            0 0 16px rgba(124,58,237,0.4),
+            0 0 24px rgba(168,85,247,0.3);
+        }
 
         .about-pillar-num {
           font-size: 9px; letter-spacing: 0.28em;
@@ -355,11 +379,103 @@ function About() {
           color: var(--text-muted, rgba(240,238,255,0.4));
         }
 
+        /* ── Process Section ── */
+        .about-process-header {
+          display: flex; align-items: center; gap: 16px;
+          margin-bottom: 40px;
+          opacity: 0; transition: opacity 0.5s ease 0.45s;
+        }
+        .about-process-header.visible { opacity: 1; }
+
+        .about-process-label {
+          font-size: 10px; font-weight: 500;
+          letter-spacing: 0.3em; text-transform: uppercase;
+          color: var(--text-muted, rgba(240,238,255,0.4));
+        }
+        .about-process-line {
+          flex: 1; height: 1px;
+          background: linear-gradient(90deg, rgba(124,58,237,0.3), transparent);
+        }
+
+        .about-process-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 24px;
+        }
+
+        .about-process-step {
+          background: rgba(124,58,237,0.04);
+          border: 1px solid var(--border, rgba(168,85,247,0.12));
+          padding: 28px 20px;
+          transition: all 0.4s ease;
+          opacity: 0; transform: translateY(20px);
+          border-radius: 2px;
+        }
+        .about-process-step.visible { opacity: 1; transform: translateY(0); }
+        .about-process-step:hover {
+          background: rgba(124,58,237,0.1);
+          border-color: rgba(168,85,247,0.3);
+          transform: translateY(-4px);
+        }
+
+        .about-step-number {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 28px; font-weight: 700;
+          background: linear-gradient(135deg, #a855f7, #7c3aed);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin-bottom: 20px;
+          display: inline-block;
+        }
+
+        .about-step-title {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 17px; font-weight: 600;
+          color: var(--text, #f0eeff);
+          margin-bottom: 12px;
+          line-height: 1.3;
+        }
+
+        .about-step-desc {
+          font-size: 12px; font-weight: 300;
+          line-height: 1.7;
+          color: var(--text-muted, rgba(240,238,255,0.5));
+        }
+
+        /* ── Bottom Quote ── */
+        .about-quote {
+          margin-top: 72px;
+          padding-top: 48px;
+          border-top: 1px solid var(--border, rgba(168,85,247,0.12));
+          text-align: center;
+          opacity: 0; transform: translateY(20px);
+          transition: opacity 0.7s ease 0.6s, transform 0.7s ease 0.6s;
+        }
+        .about-quote.visible { opacity: 1; transform: translateY(0); }
+
+        .about-quote-text {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(18px, 3vw, 24px);
+          font-weight: 600;
+          color: var(--text-dim, rgba(240,238,255,0.8));
+          line-height: 1.4;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .about-quote-text span {
+          background: linear-gradient(135deg, #a855f7, #c084fc);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
           .about-inner { padding: 0 32px; }
           .about-header { gap: 40px; }
           .about-pillars { grid-template-columns: repeat(2, 1fr); }
+          .about-process-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
           .about-stats { grid-template-columns: repeat(2, 1fr); }
           .about-stats .about-stat:nth-child(2) { border-right: none; }
           .about-stats .about-stat:nth-child(3) { border-top: 1px solid rgba(168,85,247,0.12); }
@@ -393,9 +509,18 @@ function About() {
 
           .about-pillars {
             grid-template-columns: repeat(2, 1fr);
+            margin-bottom: 56px;
           }
-
           .about-pillar { padding: 24px 18px; }
+
+          .about-process-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+          .about-process-step { padding: 20px 16px; }
+
+          .about-quote { margin-top: 48px; padding-top: 32px; }
+          .about-quote-text { font-size: 16px; }
         }
 
         @media (max-width: 480px) {
@@ -409,8 +534,10 @@ function About() {
           .about-stats { grid-template-columns: repeat(2, 1fr); }
 
           .about-pillars { grid-template-columns: 1fr; }
+          .about-process-grid { grid-template-columns: 1fr; }
 
           .about-pillar { padding: 20px 16px; }
+          .about-process-step { padding: 18px 16px; }
 
           .about-crosshair { display: none; }
         }
@@ -458,7 +585,7 @@ function About() {
           <div className={`about-eyebrow ${inView ? "visible" : ""}`}>
             <div className="about-eyebrow-pill">
               <div className="about-eyebrow-dot" />
-              <span className="about-eyebrow-text">About Infinaut</span>
+              <span className="about-eyebrow-text">ABOUT INFINAUT</span>
             </div>
           </div>
 
@@ -472,32 +599,31 @@ function About() {
 
             <div className={`about-desc-col ${inView ? "visible" : ""}`}>
               <p className="about-desc">
-                Infinaut is a modern Creative, Development, and AI Digital
-                Solutions Agency — operating at the intersection of design,
-                technology, and intelligence.
+                Innaut helps businesses design, build, and scale modern 
+                digital systems.
               </p>
               <p className="about-desc">
-                We don't just deliver projects. We build strategic digital
-                ecosystems — partnering with businesses ready to grow beyond
-                conventional digital presence.
+                From brand identity to AI-powered work ows, we create 
+                solutions that improve how businesses operate and grow.
               </p>
               <p className="about-tagline">
-                Creative intelligence meets engineering precision.
+                We don’t just deliver projects we build systems that work 
+                long-term.
               </p>
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stats - from image: Box 1, Box 2, Box 3, Box 4 */}
           <div className={`about-stats ${inView ? "visible" : ""}`}>
-            {stats.map((s) => (
-              <div className="about-stat" key={s.label}>
+            {stats.map((s, idx) => (
+              <div className="about-stat" key={idx}>
                 <div className="about-stat-value">{s.value}</div>
                 <div className="about-stat-label">{s.label}</div>
               </div>
             ))}
           </div>
 
-          {/* Pillars */}
+          {/* Pillars Section - Our Intersection */}
           <div className={`about-pillars-header ${inView ? "visible" : ""}`}>
             <span className="about-pillars-label">Our Intersection</span>
             <div className="about-pillars-line" />
@@ -520,8 +646,36 @@ function About() {
             ))}
           </div>
 
+          {/* Process Section - from image: 01 Understand the Business, etc */}
+          <div className={`about-process-header ${inView ? "visible" : ""}`}>
+            <span className="about-process-label">Our Process</span>
+            <div className="about-process-line" />
+          </div>
+
+          <div className="about-process-grid">
+            {processSteps.map((step, i) => (
+              <div
+                key={step.step}
+                className={`about-process-step ${inView ? "visible" : ""}`}
+                style={{
+                  transition: `opacity 0.6s ease ${0.55 + i * 0.1}s, transform 0.6s ease ${0.55 + i * 0.1}s`
+                }}
+              >
+                <div className="about-step-number">{step.step}</div>
+                <div className="about-step-title">{step.title}</div>
+                <p className="about-step-desc">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+          
         </div>
       </section>
+        <SEO 
+        title="About Infinaut - Our Story & Vision"
+        description="Learn about our mission to revolutionize digital ecosystems through innovative technology and creative solutions."
+      />
+      {/* rest of your component */}
+
     </>
   );
 }
