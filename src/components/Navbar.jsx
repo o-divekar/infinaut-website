@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from 'react-router-dom';
 const LOGO_SVG = "data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTkwLjk2IDY1NC4yNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNhNmE4YWI7fS5jbHMtMntmaWxsOiNiYmJkYmY7fS5jbHMtM3tmaWxsOiNlNmU3ZTg7fS5jbHMtNHtmaWxsOiNmZmY7fTwvc3R5bGU+PC9kZWZzPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTE5Ni42Niw1NjIuN3MtNzAtMTM0LjQ1LDMuODYtMTk4LjczQzIwMC41MiwzNjQsNTEuMzEsNDEzLjA3LDE5Ni42Niw1NjIuN1oiLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik00MTkuODksOTRzNDMuNDgsNTIuMTUtLjk0LDk2LjUzQzQxOSwxOTAuNDgsNTE5LDE2Ny44LDQxOS44OSw5NFoiLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yMDYuMjQsOTAuNTJTMTczLDkyLjU0LDE2OC42Nyw5N3MyMy40MSwxOC41NiwyMy40MSwxOC41NlMxODYuNjYsMTAxLDIwNi4yNCw5MC41MloiLz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzQuMTcsNDYwLjJzLTIxLTEwNy45MSwxNjYuNjMtMTA4LjUybDEwOC42Ny02MC42MlM0OTYuNjMsMjY5Ljg0LDQ2MiwxNDEuMzFjMCwwLDUuNDQsNTAtODguMjksNTUuMTcsMCwwLTQ4LjQ1LDUuNDYtNTcuMDUsMTEuNTJzLTExNi4zNyw2Ni42OS0xMTYuMzcsNjYuNjlTMTA5LjcyLDMxNC4xLDEzNC4xNyw0NjAuMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik00MTMuOCw1NTguNzRzNDYuMy05Ny4wOS0xMDMuOTItMTk3LjIxTDE4OS40LDI3MS4xOXMtNzktNDYuMTctMzYuNzQtMTM1LjVsMTUuODEtMzguNTFzMTcxLDkyLjI1LDI1OC40MywyMTIuOTNDNDI2LjksMzEwLjExLDUzMi4zOSw0MjAuODEsNDEzLjgsNTU4Ljc0WiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTU5MSwyNTMuM2EyNS40MSwyNS40MSwwLDAsMSwwLTM3LjJxOC4xLTcuNDgsMjEtNy41dDIxLDcuMmEyMy4wOSwyMy4wOSwwLDAsMSw4LjEsMTgsMjUuNDcsMjUuNDcsMCwwLDEtOC4xLDE5LjM1cS04LjEsNy42NS0yMSw3LjY1VDU5MSwyNTMuM1ptLTIuNCwzMGg0Ni44VjQ0NC43aC00Ni44WiIvPjxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTgyNS40NCwyOTguOXExOC40NSwxOCwxOC40NSw1My40djkyLjRoLTQ2LjhWMzU5LjVxMC0xOS4xOS04LjQtMjguNjV0LTI0LjMtOS40NXEtMTcuNywwLTI4LjIsMTF0LTEwLjUsMzIuNTV2NzkuOGgtNDYuOFYyODMuM2g0NC43djE4LjlhNjIuMyw2Mi4zLDAsMCwxLDIzLjEtMTUuNzVBODAuNDgsODAuNDgsMCwwLDEsNzc3LDI4MC45UTgwNywyODAuOSw4MjUuNDQsMjk4LjlaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNOTM3LjQ5LDI4Ni45aDQxLjR2MzZoLTQwLjJWNDQ0LjdoLTQ2LjhWMzIyLjlIODY3di0zNmgyNC45di03LjJxMC0yNy42LDE2LjM1LTQzLjh0NDYtMTYuMmE4NS44OSw4NS44OSwwLDAsMSwyMCwyLjI1QTQ4LjQ5LDQ4LjQ5LDAsMCwxLDk5MCwyMjguNGwtMTIuMywzMy45YTMyLDMyLDAsMCwwLTE4LjktNS43cS0yMS4zLDAtMjEuMywyMy40Wm05MS4yLTMzLjZhMjUuNDEsMjUuNDEsMCwwLDEsMC0zNy4ycTguMS03LjQ4LDIxLTcuNXQyMSw3LjJhMjMuMDksMjMuMDksMCwwLDEsOC4xLDE4LDI1LjQ3LDI1LjQ3LDAsMCwxLTguMSwxOS4zNXEtOC4xLDcuNjUtMjEsNy42NVQxMDI4LjY5LDI1My4zWm0tMi40LDMwaDQ2LjhWNDQ0LjdoLTQ2LjhaIi8+PHBhdGggY2xhc3M9ImNscy00IiBkPSJNMTI2My4xNCwyOTguOXExOC40NSwxOCwxOC40NSw1My40djkyLjRoLTQ2LjhWMzU5LjVxMC0xOS4xOS04LjQtMjguNjV0LTI0LjMtOS40NXEtMTcuNzEsMC0yOC4yLDExdC0xMC41LDMyLjU1djc5LjhoLTQ2LjhWMjgzLjNoNDQuN3YxOC45YTYyLjE0LDYyLjE0LDAsMCwxLDIzLjEtMTUuNzUsODAuNDEsODAuNDEsMCwwLDEsMzAuMy01LjU1UTEyNDQuNjgsMjgwLjksMTI2My4xNCwyOTguOVoiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0xNDQ2LjU4LDI5OC43NXEyMC4xLDE3Ljg1LDIwLjEsNTMuODV2OTIuMWgtNDMuOFY0MjQuNnEtMTMuMiwyMi41LTQ5LjIsMjIuNS0xOC42LDAtMzIuMjUtNi4zdC0yMC44NS0xNy40YTQ1LjI2LDQ1LjI2LDAsMCwxLTcuMi0yNS4ycTAtMjIuNSwxNi45NS0zNS40dDUyLjM1LTEyLjloMzcuMnEwLTE1LjMtOS4zLTIzLjU1dC0yNy45LTguMjVhODEuNDYsODEuNDYsMCwwLDAtMjUuMzUsNCw2Ny4wNyw2Ny4wNywwLDAsMC0yMS4xNSwxMWwtMTYuOC0zMi43cTEzLjItOS4yOCwzMS42NS0xNC40YTE0MS43OCwxNDEuNzgsMCwwLDEsMzgtNS4xUTE0MjYuNDgsMjgwLjksMTQ0Ni41OCwyOTguNzVabS0zOS45LDExMS4zYTMwLjM3LDMwLjM3LDAsMCwwLDEzLjItMTYuMzVWMzc3LjJoLTMyLjFxLTI4LjgsMC0yOC44LDE4LjlhMTYuODIsMTYuODIsMCwwLDAsNywxNC4yNXE3LDUuMjUsMTkuMzUsNS4yNUE0MC43Niw0MC43NiwwLDAsMCwxNDA2LjY4LDQxMC4wNVoiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0xNjcxLjU4LDI4My4zVjQ0NC43aC00NC40VjQyNS41YTYyLjA3LDYyLjA3LDAsMCwxLTIyLjIsMTYuMDUsNjkuODQsNjkuODQsMCwwLDEtMjcuOSw1LjU1cS0zMS44LDAtNTAuNC0xOC4zdC0xOC42LTU0LjNWMjgzLjNoNDYuOHY4NC4zcTAsMzksMzIuNywzOSwxNi44LDAsMjctMTF0MTAuMi0zMi41NVYyODMuM1oiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0xODE5LjE4LDQzNi45YTQ3Ljc1LDQ3Ljc1LDAsMCwxLTE3LDcuNjUsODUuNyw4NS43LDAsMCwxLTIxLjE1LDIuNTVxLTI4LjgsMC00NC41NS0xNC43dC0xNS43NS00My4yVjMyMi45aC0yNC45di0zNmgyNC45VjI0Ny42aDQ2Ljh2MzkuM2g0MC4ydjM2aC00MC4ydjY1LjdxMCwxMC4yLDUuMjUsMTUuNzV0MTQuODUsNS41NXExMS4xLDAsMTguOS02WiIvPjwvc3ZnPg==";
 
 function Navbar() {
-  const [scrolled, setScrolled]       = useState(false);
-  const [activeLink, setActiveLink]   = useState(null);
-  const [mounted, setMounted]         = useState(false);
+  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+  const [activeLink, setActiveLink] = useState(null);
+  const [mounted, setMounted] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
-  const [menuOpen, setMenuOpen]       = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setMounted(true), 100);
@@ -17,28 +18,41 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false); };
+    const onResize = () => {
+      if (window.innerWidth > 768) setMenuOpen(false);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   const links = [
-    { label: "About",    href: "about"    },
-    { label: "Services", href: "services" },
-    { label: "Process",  href: "process"  },
-    { label: "Contact",  href: "contact"  },
+    { label: "About", href: "about", isPage: false },
+    { label: "Services", href: "services", isPage: false },
+    { label: "Process", href: "process", isPage: false },
+    { label: "Blog", href: "/blog", isPage: true },
+    { label: "Contact", href: "contact", isPage: false },
   ];
 
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setMenuOpen(false);
+  const scrollTo = (id, isPage = false) => {
+    if (isPage) {
+      navigate(id);  // Use React Router navigation instead of window.location
+      setMenuOpen(false);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        setMenuOpen(false);
+      }
+    }
   };
+  
 
   return (
     <>
@@ -105,7 +119,6 @@ function Navbar() {
           position: relative;
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
-          /* gentle idle glow */
           animation: iconBreath 4s ease-in-out infinite;
         }
         @keyframes iconBreath {
@@ -114,19 +127,16 @@ function Navbar() {
         }
 
         .inf-icon {
-          /* SVG has white fills and dark bg — use mix-blend-mode so black bg disappears on dark navbar */
           height: 38px; width: auto; display: block;
           mix-blend-mode: screen;
           position: relative; z-index: 1;
           transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
         }
 
-        /* hover: icon lifts */
         .inf-logo:hover .inf-icon {
           transform: translateY(-1px) scale(1.04);
         }
 
-        /* hover: stronger glow on wrap */
         .inf-logo:hover .inf-icon-wrap {
           animation: none;
           filter: brightness(1.1) drop-shadow(0 0 14px rgba(168,85,247,0.45));
@@ -140,7 +150,6 @@ function Navbar() {
           letter-spacing: 0.09em;
           text-transform: lowercase;
           line-height: 1;
-          /* white with a barely-there purple blush */
           color: rgba(255,255,255,0.92);
           transition: color 0.25s ease, letter-spacing 0.3s ease;
           white-space: nowrap;
@@ -371,14 +380,17 @@ function Navbar() {
             <li key={link.label}
               className={`inf-mobile-link ${activeLink === i ? "active" : ""}`}
               style={{ "--mob-delay": `${0.1 + i * 0.07}s` }}
-              onClick={() => { setActiveLink(i); scrollTo(link.href); }}>
+              onClick={() => {
+                setActiveLink(i);
+                scrollTo(link.href, link.isPage);
+              }}>
               <span className="inf-mobile-link-num">0{i + 1}</span>
               {link.label}
             </li>
           ))}
         </ul>
         <div className="inf-mobile-cta-wrap">
-          <button className="inf-mobile-cta" onClick={() => scrollTo("contact")}>
+          <button className="inf-mobile-cta" onClick={() => scrollTo("contact", false)}>
             Start a Conversation →
           </button>
         </div>
@@ -393,12 +405,11 @@ function Navbar() {
         {/* Logo lockup */}
         <div
           className={`inf-logo ${mounted ? "mounted" : ""}`}
-          onClick={() => scrollTo("hero")}
+          onClick={() => scrollTo("hero", false)}
         >
           <div className="inf-icon-wrap">
             <img src={LOGO_SVG} alt="Infinaut" className="inf-icon" />
           </div>
-  
         </div>
 
         {/* Desktop links */}
@@ -407,7 +418,10 @@ function Navbar() {
             <li key={link.label}
               className={`inf-link ${activeLink === i ? "active" : ""} ${mounted ? "mounted" : ""}`}
               style={{ "--delay": `${0.4 + i * 0.07}s` }}
-              onClick={() => { setActiveLink(i); scrollTo(link.href); }}
+              onClick={() => {
+                setActiveLink(i);
+                scrollTo(link.href, link.isPage);
+              }}
               onMouseEnter={() => setHoveredLink(i)}
               onMouseLeave={() => setHoveredLink(null)}>
               <span className="inf-link-dot" />
@@ -418,10 +432,12 @@ function Navbar() {
 
         {/* Desktop CTA */}
         <div className={`inf-cta-wrap ${mounted ? "mounted" : ""}`}>
-          <button className="inf-cta" onClick={() => scrollTo("contact")}
-          aria-label="Start a conversation with our team"
+          <button 
+            className="inf-cta" 
+            onClick={() => scrollTo("contact", false)}
+            aria-label="Start a conversation with our team"
           >
-             Start a Conversation
+            Start a Conversation
             <span className="inf-cta-arrow">→</span>
           </button>
         </div>

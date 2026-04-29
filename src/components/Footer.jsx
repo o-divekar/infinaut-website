@@ -374,17 +374,23 @@ function Footer() {
               Building Digital Ecosystems<br />That Drive Intelligent Growth.
             </p>
             <div className="footer-socials">
-              {[
-                { icon: "𝕏",  label: "Twitter" },
-                { icon: "in", label: "LinkedIn" },
-                { icon: "▶",  label: "YouTube" },
-                { icon: "⬡",  label: "Discord" },
-              ].map((s) => (
-                <button key={s.label} className="footer-social-btn" title={s.label}>
-                  {s.icon}
-                </button>
-              ))}
-            </div>
+            {[
+              { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/p/DXo27WXCN20/?igsh=bHlzbnBkZThiM3po" },
+              { icon: "𝕏", label: "Twitter/X", url: "https://twitter.com/infinaut" },
+              { icon: "in", label: "LinkedIn", url: "https://linkedin.com/company/infinaut" },
+              { icon: "▶", label: "YouTube", url: "https://youtube.com/@infinaut" },
+            ].map((s) => (
+              <button 
+                key={s.label} 
+                className="footer-social-btn" 
+                title={s.label}
+                onClick={() => window.open(s.url, '_blank')}
+                aria-label={`Visit our ${s.label} page`}
+              >
+                {s.icon}
+              </button>
+            ))}
+          </div>
           </div>
 
           {/* Nav columns */}
@@ -425,13 +431,9 @@ function Footer() {
         {/* Bottom bar */}
         <div className={`footer-bottom ${inView ? "visible" : ""}`}>
           <p className="footer-copy">
-            © 2026 <strong>Infinaut</strong>. All Rights Reserved.
+            © 2025 <strong>Infinaut</strong>. All Rights Reserved.
           </p>
           <div className="footer-bottom-right">
-            <button className="footer-bottom-link">Privacy</button>
-            <div className="footer-dot" />
-            <button className="footer-bottom-link">Terms</button>
-            <div className="footer-dot" />
             <button
               className="footer-top-btn"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

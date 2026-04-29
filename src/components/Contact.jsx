@@ -82,6 +82,18 @@ function Contact() {
     { id: "message", label: "Your Message",   type: "textarea", placeholder: "Tell us about your project…" },
   ];
 
+  // Social buttons - Instagram added, Discord removed
+  const socialButtons = [
+    { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/p/DXo27WXCN20/?igsh=bHlzbnBkZThiM3po" },
+    { icon: "𝕏", label: "Twitter/X", url: "https://twitter.com/infinaut" },
+    { icon: "in", label: "LinkedIn", url: "https://linkedin.com/company/infinaut" },
+    { icon: "▶", label: "YouTube", url: "https://youtube.com/@infinaut" },
+  ];
+
+  const handleSocialClick = (url) => {
+    if (url) window.open(url, '_blank');
+  };
+
   return (
     <>
       <style>{`
@@ -261,6 +273,7 @@ function Contact() {
         /* Social row */
         .contact-social {
           display: flex; gap: 10px; margin-top: 28px;
+          flex-wrap: wrap;
         }
         .contact-social-btn {
           width: 36px; height: 36px;
@@ -523,10 +536,17 @@ function Contact() {
               ))}
             </div>
 
-            {/* Social buttons */}
+            {/* Social buttons - Instagram added */}
             <div className="contact-social">
-              {["𝕏", "in", "▶", "⬡"].map((s) => (
-                <button key={s} className="contact-social-btn">{s}</button>
+              {socialButtons.map((social) => (
+                <button 
+                  key={social.label} 
+                  className="contact-social-btn"
+                  onClick={() => handleSocialClick(social.url)}
+                  aria-label={social.label}
+                >
+                  {social.icon}
+                </button>
               ))}
             </div>
           </div>
@@ -601,11 +621,10 @@ function Contact() {
 
         </div>
       </section>
-        <SEO 
-        title="Contact- Infinaut"
+      <SEO 
+        title="Contact - Infinaut"
         description="Infinaut works with forward-thinking businesses ready to move beyond conventional digital presence. Tell us about your vision — we'll build the ecosystem around it."
       />
-      {/* rest of your component */}
     </>
     
   );

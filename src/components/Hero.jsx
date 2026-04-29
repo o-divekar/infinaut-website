@@ -459,7 +459,6 @@ function Hero() {
             <button className="hero-cta-primary" onClick={scrollToContact}>
               Start a Conversation <span className="hero-cta-arrow">→</span>
             </button>
-            <button className="hero-cta-secondary">View Our Work</button>
           </div>
         </div>
 

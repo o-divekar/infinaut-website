@@ -1,30 +1,45 @@
 import { useState, useEffect, useRef } from "react";
 import SEO from "./SEO";
 
+// Import SVG assets (adjust paths as needed)
+import creativeDesignIcon from "../assets/creative-design.svg";
+import developmentIcon from "../assets/development.svg";
+import aiAutomationIcon from "../assets/ai-automation.svg";
+import digitalGrowthIcon from "../assets/digital-growth.svg";
+import step1Icon from "../assets/step1.svg";
+import step2Icon from "../assets/step2.svg";
+import step3Icon from "../assets/step3.svg";
+import step4Icon from "../assets/step4.svg";
+
+// Fallback inline SVGs in case imports fail — replace with actual imported paths
 const pillars = [
   {
     label: "01",
     title: "Creative Design",
     desc: "Visual identity systems and brand communication built with intention and precision.",
-    symbol: "◈",
+    icon: creativeDesignIcon,
+    fallbackSvg: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
   },
   {
     label: "02",
     title: "Development",
     desc: "Custom web products and digital infrastructure engineered to perform at scale.",
-    symbol: "⬡",
+    icon: developmentIcon,
+    fallbackSvg: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l-4 4 4 4M18 6l4 4-4 4M12 2L8 22"/></svg>`,
   },
   {
     label: "03",
     title: "AI & Automation",
     desc: "Intelligent workflows and data systems that help your business operate at a new level.",
-    symbol: "◎",
+    icon: aiAutomationIcon,
+    fallbackSvg: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.07.07a8 8 0 0 0 11.66 0z"/></svg>`,
   },
   {
     label: "04",
     title: "Digital Growth",
     desc: "Strategic growth systems — SEO, analytics, and conversion architecture that compound over time.",
-    symbol: "△",
+    icon: digitalGrowthIcon,
+    fallbackSvg: `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9"/></svg>`,
   },
 ];
 
@@ -40,35 +55,91 @@ const processSteps = [
     step: "01",
     title: "Understand the Business",
     desc: "We analyze your brand, audience, and current digital presence to identify real growth opportunities.",
+    icon: step1Icon,
+    fallbackSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`,
   },
   {
     step: "02",
     title: "Design the System",
     desc: "We create a structured plan combining design, technology, and workflows tailored to your business.",
+    icon: step2Icon,
+    fallbackSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg>`,
   },
   {
     step: "03",
     title: "Build & Integrate",
     desc: "We develop and implement everything — from brand to platform to automation systems.",
+    icon: step3Icon,
+    fallbackSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg>`,
   },
   {
     step: "04",
     title: "Optimize & Scale",
     desc: "We continuously improve performance, efficiency, and growth over time.",
+    icon: step4Icon,
+    fallbackSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 20L8 14M22 20L16 14M12 4V12M12 12L9 9M12 12L15 9"/><circle cx="12" cy="15" r="2"/></svg>`,
   },
 ];
+
 function useInView(threshold = 0.1) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true);
+      },
       { threshold }
     );
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
   }, []);
   return [ref, inView];
+}
+
+// Image component with fallback
+function PillarIcon({ icon, fallbackSvg, alt }) {
+  const [imgError, setImgError] = useState(false);
+  
+  if (!imgError && icon) {
+    return (
+      <img 
+        src={icon} 
+        alt={alt}
+        className="pillar-icon-img"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+  
+  return (
+    <div 
+      className="pillar-icon-fallback"
+      dangerouslySetInnerHTML={{ __html: fallbackSvg }}
+    />
+  );
+}
+
+function StepIcon({ icon, fallbackSvg, alt }) {
+  const [imgError, setImgError] = useState(false);
+  
+  if (!imgError && icon) {
+    return (
+      <img 
+        src={icon} 
+        alt={alt}
+        className="step-icon-img"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+  
+  return (
+    <div 
+      className="step-icon-fallback"
+      dangerouslySetInnerHTML={{ __html: fallbackSvg }}
+    />
+  );
 }
 
 function About() {
@@ -295,7 +366,7 @@ function About() {
           color: var(--text-muted, rgba(240,238,255,0.4));
         }
 
-        /* ── Pillars ── */
+        /* ── Pillars Section - Our Intersection ── */
         .about-pillars-header {
           display: flex; align-items: center; gap: 16px;
           margin-bottom: 24px;
@@ -343,22 +414,29 @@ function About() {
         }
         .about-pillar:hover::before { transform: scaleX(1); }
 
-        .about-pillar-symbol {
-          font-size: 22px; 
-          color: #a855f7;
-          margin-bottom: 20px; 
+        /* Pillar Icon Styles */
+        .pillar-icon-img,
+        .pillar-icon-fallback {
+          width: 44px;
+          height: 44px;
+          margin-bottom: 20px;
           display: block;
-          position: relative; 
-          z-index: 1;
-          transition: text-shadow 0.3s ease, color 0.3s ease;
+          transition: all 0.3s ease;
         }
-        
-        .about-pillar:hover .about-pillar-symbol {
-          color: #c084fc;
-          text-shadow: 
-            0 0 8px rgba(168,85,247,0.6),
-            0 0 16px rgba(124,58,237,0.4),
-            0 0 24px rgba(168,85,247,0.3);
+        .pillar-icon-fallback svg {
+          width: 44px;
+          height: 44px;
+          stroke: #a855f7;
+          stroke-width: 1.5;
+          fill: none;
+        }
+        .about-pillar:hover .pillar-icon-img {
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 8px rgba(168,85,247,0.5));
+        }
+        .about-pillar:hover .pillar-icon-fallback svg {
+          stroke: #c084fc;
+          filter: drop-shadow(0 0 6px rgba(168,85,247,0.4));
         }
 
         .about-pillar-num {
@@ -418,14 +496,29 @@ function About() {
           transform: translateY(-4px);
         }
 
-        .about-step-number {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 28px; font-weight: 700;
-          background: linear-gradient(135deg, #a855f7, #7c3aed);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          background-clip: text;
-          margin-bottom: 20px;
-          display: inline-block;
+        /* Step Icon Styles */
+        .step-icon-img,
+        .step-icon-fallback {
+          width: 36px;
+          height: 36px;
+          margin-bottom: 18px;
+          display: block;
+          transition: all 0.3s ease;
+        }
+        .step-icon-fallback svg {
+          width: 36px;
+          height: 36px;
+          stroke: #a855f7;
+          stroke-width: 1.5;
+          fill: none;
+        }
+        .about-process-step:hover .step-icon-img {
+          transform: scale(1.08);
+          filter: drop-shadow(0 0 8px rgba(168,85,247,0.5));
+        }
+        .about-process-step:hover .step-icon-fallback svg {
+          stroke: #c084fc;
+          filter: drop-shadow(0 0 6px rgba(168,85,247,0.4));
         }
 
         .about-step-title {
@@ -440,6 +533,11 @@ function About() {
           font-size: 12px; font-weight: 300;
           line-height: 1.7;
           color: var(--text-muted, rgba(240,238,255,0.5));
+        }
+
+        /* Remove step number since we have images now, but keep for layout compatibility */
+        .about-step-number {
+          display: none;
         }
 
         /* ── Bottom Quote ── */
@@ -497,12 +595,6 @@ function About() {
             grid-template-columns: repeat(2, 1fr);
             margin-bottom: 48px;
           }
-          .about-stats .about-stat:nth-child(2) { border-right: none; }
-          .about-stats .about-stat:nth-child(3),
-          .about-stats .about-stat:nth-child(4) {
-            border-top: 1px solid rgba(168,85,247,0.12);
-          }
-          .about-stats .about-stat:nth-child(4) { border-right: none; }
 
           .about-stat { padding: 20px 16px; }
           .about-stat-value { font-size: 28px; }
@@ -580,7 +672,6 @@ function About() {
         </svg>
 
         <div className="about-inner">
-
           {/* Eyebrow */}
           <div className={`about-eyebrow ${inView ? "visible" : ""}`}>
             <div className="about-eyebrow-pill">
@@ -599,21 +690,21 @@ function About() {
 
             <div className={`about-desc-col ${inView ? "visible" : ""}`}>
               <p className="about-desc">
-                Innaut helps businesses design, build, and scale modern 
+                Infinaut helps businesses design, build, and scale modern 
                 digital systems.
               </p>
               <p className="about-desc">
-                From brand identity to AI-powered work ows, we create 
+                From brand identity to AI-powered workflows, we create 
                 solutions that improve how businesses operate and grow.
               </p>
               <p className="about-tagline">
-                We don’t just deliver projects we build systems that work 
+                We don't just deliver projects — we build systems that work 
                 long-term.
               </p>
             </div>
           </div>
 
-          {/* Stats - from image: Box 1, Box 2, Box 3, Box 4 */}
+          {/* Stats */}
           <div className={`about-stats ${inView ? "visible" : ""}`}>
             {stats.map((s, idx) => (
               <div className="about-stat" key={idx}>
@@ -623,7 +714,7 @@ function About() {
             ))}
           </div>
 
-          {/* Pillars Section - Our Intersection */}
+          {/* Pillars Section with SVG Icons */}
           <div className={`about-pillars-header ${inView ? "visible" : ""}`}>
             <span className="about-pillars-label">Our Intersection</span>
             <div className="about-pillars-line" />
@@ -638,7 +729,11 @@ function About() {
                   transition: `opacity 0.6s ease ${0.45 + i * 0.1}s, transform 0.6s ease ${0.45 + i * 0.1}s, background 0.3s ease`
                 }}
               >
-                <span className="about-pillar-symbol">{p.symbol}</span>
+                <PillarIcon 
+                  icon={p.icon} 
+                  fallbackSvg={p.fallbackSvg} 
+                  alt={p.title} 
+                />
                 <span className="about-pillar-num">{p.label}</span>
                 <div className="about-pillar-title">{p.title}</div>
                 <p className="about-pillar-desc">{p.desc}</p>
@@ -646,7 +741,7 @@ function About() {
             ))}
           </div>
 
-          {/* Process Section - from image: 01 Understand the Business, etc */}
+          {/* Process Section with SVG Icons */}
           <div className={`about-process-header ${inView ? "visible" : ""}`}>
             <span className="about-process-label">Our Process</span>
             <div className="about-process-line" />
@@ -661,21 +756,30 @@ function About() {
                   transition: `opacity 0.6s ease ${0.55 + i * 0.1}s, transform 0.6s ease ${0.55 + i * 0.1}s`
                 }}
               >
-                <div className="about-step-number">{step.step}</div>
+                <StepIcon 
+                  icon={step.icon} 
+                  fallbackSvg={step.fallbackSvg} 
+                  alt={step.title} 
+                />
                 <div className="about-step-title">{step.title}</div>
                 <p className="about-step-desc">{step.desc}</p>
               </div>
             ))}
           </div>
-          
+
+          {/* Bottom Quote */}
+          <div className={`about-quote ${inView ? "visible" : ""}`}>
+            <div className="about-quote-text">
+              "We build systems that <span>compound</span> — 
+              every project is a foundation for the next."
+            </div>
+          </div>
         </div>
       </section>
-        <SEO 
+      <SEO 
         title="About Infinaut - Our Story & Vision"
         description="Learn about our mission to revolutionize digital ecosystems through innovative technology and creative solutions."
       />
-      {/* rest of your component */}
-
     </>
   );
 }

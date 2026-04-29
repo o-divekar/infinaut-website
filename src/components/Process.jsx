@@ -1,5 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 
+// Import SVG images from assets folder
+import discoveryIcon from "../assets/discovery.svg";
+import strategyIcon from "../assets/digital-growth.svg";
+import designIcon from "../assets/creative-design.svg";
+import buildIcon from "../assets/step2.svg";
+import launchIcon from "../assets/step1.svg";
+
 function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -17,7 +24,7 @@ function useInView(threshold = 0.12) {
 const steps = [
   {
     num: "01",
-    symbol: "◎",
+    icon: discoveryIcon,
     title: "Discovery",
     sub: "Deep Dive",
     body: "Understanding your business, goals, and gaps",
@@ -26,7 +33,7 @@ const steps = [
   },
   {
     num: "02",
-    symbol: "⬡",
+    icon: strategyIcon,
     title: "Strategy",
     sub: "Blueprint",
     body: "Planning the system, structure, and roadmap",
@@ -35,16 +42,16 @@ const steps = [
   },
   {
     num: "03",
-    symbol: "◈",
+    icon: designIcon,
     title: "Design",
     sub: "Craft",
-    body: "Creating brand, UI, and user experience ",
+    body: "Creating brand, UI, and user experience",
     details: ["Brand identity system", "UX wireframes", "UI design", "Motion language"],
     duration: "Week 3–6",
   },
   {
     num: "04",
-    symbol: "△",
+    icon: buildIcon,
     title: "Build",
     sub: "Engineer",
     body: "Development, AI integration, testing, and infrastructure deployment.",
@@ -53,10 +60,10 @@ const steps = [
   },
   {
     num: "05",
-    symbol: "∞",
+    icon: launchIcon,
     title: "Launch & Scale",
     sub: "Activate",
-    body: "Deploying,optimizing, and growing continuously",
+    body: "Deploying, optimizing, and growing continuously",
     details: ["Go-live coordination", "Full documentation", "Team handoff", "Growth activation"],
     duration: "Week 10–12",
   },
@@ -316,7 +323,7 @@ function Process() {
 
         /* Connector line */
         .proc-connector {
-          position: absolute; top: 32px; left: 28px;
+          position: absolute; top: 44px; left: 28px;
           right: 28px; height: 1px;
           background: var(--border); z-index: 0;
         }
@@ -338,14 +345,19 @@ function Process() {
         }
 
         .proc-node-circle {
-          width: 64px; height: 64px; border-radius: 50%;
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
           border: 1px solid var(--border);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 22px; 
-          background: linear-gradient(145deg, rgba(2,0,10,0.9), rgba(10,7,18,0.95));
-          position: relative; z-index: 2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          z-index: 2;
           transition: all 0.3s ease;
           backdrop-filter: blur(4px);
+          background: linear-gradient(145deg, rgba(2,0,10,0.9), rgba(10,7,18,0.95));
+          overflow: hidden;
         }
 
         .proc-node.active .proc-node-circle {
@@ -355,15 +367,26 @@ function Process() {
           box-shadow: 0 0 30px rgba(168,85,247,0.3);
         }
 
-        .proc-node-symbol {
-          font-size: 24px; 
-          background: linear-gradient(135deg, var(--text-muted), var(--text-dim));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-          transition: all 0.3s ease;
+        /* Icon styles - perfectly centered and sized for circle */
+        .proc-node-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
         }
-        .proc-node.active .proc-node-symbol { 
-          background: linear-gradient(135deg, var(--pu-bright), var(--pu-light));
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .proc-node-icon {
+          width: 36px;
+          height: 36px;
+          max-width: 70%;
+          max-height: 70%;
+          object-fit: contain;
+          transition: all 0.3s ease;
+          filter: brightness(0.9);
+        }
+        .proc-node.active .proc-node-icon {
+          filter: brightness(1.2) drop-shadow(0 0 4px rgba(168,85,247,0.5));
+          transform: scale(1.05);
         }
 
         .proc-node-label {
@@ -534,6 +557,16 @@ function Process() {
           .proc-inner { padding: 0 24px; }
           .proc-nodes { flex-wrap: wrap; gap: 20px; }
           .proc-node { flex: 0 0 calc(33.33% - 20px); }
+          .proc-node-icon { 
+            width: 30px; 
+            height: 30px; 
+          }
+        }
+        @media (max-width: 480px) {
+          .proc-node-icon { 
+            width: 26px; 
+            height: 26px; 
+          }
         }
       `}</style>
 
@@ -600,7 +633,13 @@ function Process() {
                 >
                   <span className="proc-node-num">{s.num}</span>
                   <div className="proc-node-circle">
-                    <span className="proc-node-symbol">{s.symbol}</span>
+                    <div className="proc-node-icon-wrap">
+                      <img 
+                        src={s.icon} 
+                        alt={s.title} 
+                        className="proc-node-icon"
+                      />
+                    </div>
                   </div>
                   <span className="proc-node-label">{s.title}</span>
                 </div>

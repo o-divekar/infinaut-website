@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import SEO from "./SEO";
+
+// Import SVG images from assets folder
+import brandingIcon from "../assets/outdated-icon.svg";
+import webDevIcon from "../assets/step4.svg";
+import aiIcon from "../assets/Articon.svg";
+import growthIcon from "../assets/growthimg.svg";
+import infraIcon from "../assets/infra-icon.svg";
+
 function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -17,10 +25,10 @@ function useInView(threshold = 0.12) {
 const services = [
   {
     num: "01",
-    symbol: "◈",
+    icon: brandingIcon,
     title: "Branding & Identity",
     sub: "Visual Intelligence",
-    body: "We build visual systems that dene how your brand looks, feels, and communicates across every touchpoint.",
+    body: "We build visual systems that define how your brand looks, feels, and communicates across every touchpoint.",
     tags: ["Logo & Visual Identity", "Brand Guidelines", "Social Media Creatives", "Marketing & Ad Creatives","Ad Shoots & Product Shoots",
             "Typography & Color Systems",
             "Motion Graphics & Visual Assets"],
@@ -29,7 +37,7 @@ const services = [
   },
   {
     num: "02",
-    symbol: "⬡",
+    icon: webDevIcon,
     title: "Web & Product Dev",
     sub: "Engineering Depth",
     body: "Scalable digital products and platforms built for performance, usability, and long-term growth.",
@@ -46,25 +54,25 @@ const services = [
   },
   {
     num: "03",
-    symbol: "◎",
+    icon: aiIcon,
     title: "AI & Automation",
     sub: "Intelligent Systems",
-    body: "Intelligent systems that reduce manual work, improve effciency, and scale operations.",
+    body: "Intelligent systems that reduce manual work, improve efficiency, and scale operations.",
     tags: ["AI Chatbots & Assistants",
-"Work ow Automation",
-"AI Content Systems",
-"Data Processing & Pipelines",
-"Business Process Automation",
-"Custom AI Integrations"],
+            "Workflow Automation",
+            "AI Content Systems",
+            "Data Processing & Pipelines",
+            "Business Process Automation",
+            "Custom AI Integrations"],
     stat: "60%", statLabel: "Reduction in manual task load",
     accent: "#c084fc",
   },
   {
     num: "04",
-    symbol: "△",
+    icon: growthIcon,
     title: "Growth Strategy",
     sub: "Systematic Scale",
-    body: "Data-driven strategies that increase visibility,engagement, and conversions over time.",
+    body: "Data-driven strategies that increase visibility, engagement, and conversions over time.",
     tags: ["SEO & Search Optimization",
             "Content Strategy",
             "Social Media Strategy",
@@ -76,7 +84,7 @@ const services = [
   },
   {
     num: "05",
-    symbol: "⊕",
+    icon: infraIcon,
     title: "Digital Infrastructure",
     sub: "Foundation First",
     body: "The backend systems that ensure everything runs smoothly, securely, and at scale.",
@@ -85,7 +93,7 @@ const services = [
             "Domain & Server Setup",
             "Backend Systems",
             "API Integrations",
-            "Security & Maintenanc"],
+            "Security & Maintenance"],
     stat: "99.9%", statLabel: "Uptime engineered by design",
     accent: "#7c3aed",
   },
@@ -109,7 +117,15 @@ function ServiceCard({ s, i, inView, isActive, isFaded, onClick }) {
       {/* Header row */}
       <div className="svc-card-header">
         <span className="svc-card-num">{s.num}</span>
-        <span className="svc-card-symbol" style={{ color: s.accent }}>{s.symbol}</span>
+        {/* Icon instead of symbol */}
+        <div className="svc-card-icon-wrap">
+          <img 
+            src={s.icon} 
+            alt={s.title} 
+            className="svc-card-icon"
+            style={{ filter: isActive || hovered ? `drop-shadow(0 0 6px ${s.accent})` : 'none' }}
+          />
+        </div>
       </div>
 
       {/* Title block */}
@@ -430,13 +446,22 @@ function Services() {
           color: var(--text-muted);
         }
 
-        .svc-card-symbol {
-          font-size: 26px; 
-          transition: all 0.25s ease;
+        /* Icon styles - replaces symbol */
+        .svc-card-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .svc-card:hover .svc-card-symbol,
-        .svc-card.active .svc-card-symbol { 
-          transform: scale(1.15) rotate(15deg); 
+        .svc-card-icon {
+          width: 42px;
+          height: 42px;
+          object-fit: contain;
+          transition: all 0.3s ease;
+          filter: brightness(0.85);
+        }
+        .svc-card:hover .svc-card-icon,
+        .svc-card.active .svc-card-icon { 
+          transform: scale(1.1);
         }
 
         .svc-card-title-block { margin-bottom: 16px; }
@@ -579,9 +604,11 @@ function Services() {
           .svc-cards { grid-template-columns: repeat(2, 1fr); }
           .svc-inner { padding: 0 24px; }
           .svc-bottom { flex-direction: column; gap: 20px; align-items: flex-start; }
+          .svc-card-icon { width: 36px; height: 36px; }
         }
         @media (max-width: 480px) {
           .svc-cards { grid-template-columns: 1fr; }
+          .svc-card-icon { width: 32px; height: 32px; }
         }
       `}</style>
 
@@ -677,12 +704,10 @@ function Services() {
         
         </div>
       </section>
-       <SEO 
+      <SEO 
         title="Our Services - AI, Technology & Creative Solutions"
         description="Explore our comprehensive digital services including AI development, technology consulting, and creative design."
       />
-      {/* rest of your component */}
-
     </>
   );
 }

@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
+// Import SVG images from assets folder
+import fragIcon from "../assets/step2.svg";
+import outdatedIcon from "../assets/outdated-icon.svg";
+import aiIcon from "../assets/ai-icon.svg";
+import growthIcon from "../assets/growth-icon.svg";
+
 function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -17,7 +23,7 @@ function useInView(threshold = 0.12) {
 const problems = [
   {
     num: "01",
-    symbol: "⬡",
+    icon: fragIcon,
     title: "Fragmented Tools",
     sub: "Disconnected platforms",
     body: "Multiple tools with no clear system or structure.",
@@ -26,16 +32,16 @@ const problems = [
   },
   {
     num: "02",
-    symbol: "◎",
+    icon: outdatedIcon,
     title: "Outdated Identity",
     sub: "Brand misalignment",
-    body: "Your Brand no longer reflects your vlaue or direction.",
+    body: "Your Brand no longer reflects your value or direction.",
     stat: "2.4×",
     statLabel: "higher bounce rates",
   },
   {
     num: "03",
-    symbol: "△",
+    icon: aiIcon,
     title: "No AI Integration",
     sub: "Falling behind",
     body: "Manual work where automation should exist.",
@@ -44,10 +50,10 @@ const problems = [
   },
   {
     num: "04",
-    symbol: "◈",
+    icon: growthIcon,
     title: "Stalled Growth",
     sub: "No scale system",
-    body: "No system to scale, optimize, or convert consistently  .",
+    body: "No system to scale, optimize, or convert consistently.",
     stat: "∞",
     statLabel: "potential left on the table",
   },
@@ -367,22 +373,23 @@ function Problem() {
           margin-bottom: 24px; display: block;
         }
 
-        /* Symbol - FIXED: No movement, only glow on hover */
-        .prob-card-symbol {
-          font-size: 32px; 
-          color: var(--pu-light);
-          opacity: 0.7; display: block;
+        /* Icon styles - replaces symbol */
+        .prob-card-icon-wrap {
           margin-bottom: 24px;
-          transition: opacity 0.25s ease, text-shadow 0.25s ease;
-          /* No transform properties - completely static position */
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
         }
-        .prob-card:hover .prob-card-symbol { 
-          opacity: 1; 
-          color: #c084fc;
-          text-shadow: 
-            0 0 8px rgba(168,85,247,0.6),
-            0 0 16px rgba(124,58,237,0.4),
-            0 0 24px rgba(168,85,247,0.3);
+        .prob-card-icon {
+          width: 48px;
+          height: 48px;
+          object-fit: contain;
+          transition: all 0.3s ease;
+          filter: brightness(0.8) drop-shadow(0 0 0px rgba(168,85,247,0));
+        }
+        .prob-card:hover .prob-card-icon { 
+          filter: brightness(1.1) drop-shadow(0 0 6px rgba(168,85,247,0.5));
+          transform: scale(1.05);
         }
 
         /* Title */
@@ -501,6 +508,7 @@ function Problem() {
           .prob-cards { grid-template-columns: 1fr; }
           .prob-inner { padding: 0 24px; }
           .prob-banner { flex-direction: column; gap: 20px; align-items: flex-start; }
+          .prob-card-icon { width: 40px; height: 40px; }
         }
       `}</style>
 
@@ -545,7 +553,7 @@ function Problem() {
               <p className="prob-desc">
                 Most businesses have a digital presence but not a system.
                 Disconnected tools, weak branding, and lack of 
-                automation<br/> create a gap between where they are 
+                automation create a gap between where they are 
                 and where they want to be.
               </p>
               <div className="prob-warning">
@@ -572,7 +580,16 @@ function Problem() {
                 }}
               >
                 <span className="prob-card-num">{p.num}</span>
-                <span className="prob-card-symbol">{p.symbol}</span>
+                
+                {/* Icon instead of symbol */}
+                <div className="prob-card-icon-wrap">
+                  <img 
+                    src={p.icon} 
+                    alt={p.title} 
+                    className="prob-card-icon"
+                  />
+                </div>
+                
                 <div className="prob-card-title">{p.title}</div>
                 <span className="prob-card-sub">{p.sub}</span>
                 <p className="prob-card-body">{p.body}</p>
@@ -592,7 +609,7 @@ function Problem() {
                 <strong>Sound familiar?</strong> — Infinaut was built to close exactly this gap.
               </p>
             </div>
-            <button className="prob-banner-cta">See How We Solve It →</button>
+            
           </div>
 
         </div>
