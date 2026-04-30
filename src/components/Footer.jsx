@@ -43,8 +43,8 @@ const NAV_LINKS = {
     { label: "Digital Infrastructure" },
   ],
   Connect: [
-    { label: "hello@infinaut.com" },
-    { label: "www.infinaut.com" },
+    { label: "hello@infinaut.tech" },
+    { label: "www.infinaut.tech" },
     { label: "LinkedIn" },
     { label: "Twitter / X" },
   ],
@@ -375,7 +375,7 @@ function Footer() {
             </p>
             <div className="footer-socials">
             {[
-              { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/p/DXo27WXCN20/?igsh=bHlzbnBkZThiM3po" },
+              { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/infinaut.tech?igsh=MXBrbmc1MmgzZWNodA==" },
               { icon: "𝕏", label: "Twitter/X", url: "https://twitter.com/infinaut" },
               { icon: "in", label: "LinkedIn", url: "https://linkedin.com/company/infinaut" },
               { icon: "▶", label: "YouTube", url: "https://youtube.com/@infinaut" },

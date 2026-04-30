@@ -41,24 +41,25 @@ function Contact() {
     setError(null);
 
     try {
-      const response = await fetch('https://formsubmit.co/ajax/teaminfinaut@gmail.com', {
+      const response = await fetch('https://formsubmit.co/ajax/29268a025656597069e295d342ffce69', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          _subject: `New Contact from ${form.name}`,
-          _template: 'table'
-        })
+        name: form.name,
+        email: form.email,
+        message: form.message,
+        _subject: `New Contact from ${form.name}`,
+        _template: 'table',
+        _captcha: false
+      })
       });
 
       const result = await response.json();
       
-      if (response.ok) {
+      if (result.success === "true") {
         setSubmitted(true);
       } else {
         throw new Error(result.message || 'Failed to send message');
@@ -71,8 +72,8 @@ function Contact() {
   };
 
   const infoRows = [
-    { icon: "✉", label: "Email", value: "hello@infinaut.com", action: "mailto:hello@infinaut.com" },
-    { icon: "🌐", label: "Website", value: "www.infinaut.com", action: "https://www.infinaut.com" },
+    { icon: "✉", label: "Email", value: "hello@infinaut.tech", action: "mailto:hello@infinaut.tech" },
+    { icon: "🌐", label: "Website", value: "www.infinaut.tech", action: "https://www.infinaut.tech" },
     { icon: "📍", label: "Based In", value: "Global · Remote-First" },
   ];
 
@@ -84,7 +85,7 @@ function Contact() {
 
   // Social buttons - Instagram added, Discord removed
   const socialButtons = [
-    { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/p/DXo27WXCN20/?igsh=bHlzbnBkZThiM3po" },
+    { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/infinaut.tech?igsh=MXBrbmc1MmgzZWNodA=="},
     { icon: "𝕏", label: "Twitter/X", url: "https://twitter.com/infinaut" },
     { icon: "in", label: "LinkedIn", url: "https://linkedin.com/company/infinaut" },
     { icon: "▶", label: "YouTube", url: "https://youtube.com/@infinaut" },
