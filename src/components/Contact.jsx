@@ -41,7 +41,7 @@ function Contact() {
     setError(null);
 
     try {
-      const response = await fetch('https://formsubmit.co/ajax/hello@infinaut.tech', {
+      const response = await fetch('https://formsubmit.co/hello@infinaut.tech', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
