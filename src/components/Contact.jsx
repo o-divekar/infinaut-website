@@ -34,40 +34,38 @@ function Contact() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
-    
+  const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) return;
     
     setSending(true);
     setError(null);
 
     try {
-      // Use FormData instead of JSON (FormSubmit works better with FormData)
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("email", form.email);
-      formData.append("message", form.message);
-      formData.append("_subject", `New Contact from ${form.name}`);
-      formData.append("_template", "table");
-      formData.append("_captcha", "false");
-      formData.append("_next", window.location.href); // Stay on same page after submit
-
       const response = await fetch('https://formsubmit.co/hello@infinaut.tech', {
         method: 'POST',
-        body: formData // No Content-Type header needed - FormData sets it automatically
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        message: form.message,
+        _subject: `New Contact from ${form.name}`,
+        _template: 'table',
+        _captcha: false
+      })
       });
 
-      if (response.ok) {
+      const result = await response.json();
+      
+      if (result.success === "true") {
         setSubmitted(true);
-        setForm({ name: "", email: "", message: "" });
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to send message');
+        throw new Error(result.message || 'Failed to send message');
       }
     } catch (err) {
-      console.error("Submission error:", err);
-      setError(err.message || 'Something went wrong. Please try again or email us directly.');
+      setError(err.message);
     } finally {
       setSending(false);
     }
@@ -85,6 +83,7 @@ function Contact() {
     { id: "message", label: "Your Message",   type: "textarea", placeholder: "Tell us about your project…" },
   ];
 
+  // Social buttons - Instagram added, Discord removed
   const socialButtons = [
     { icon: "🅾", label: "Instagram", url: "https://www.instagram.com/infinaut.tech?igsh=MXBrbmc1MmgzZWNodA=="},
     { icon: "𝕏", label: "Twitter/X", url: "https://twitter.com/infinaut" },
@@ -122,6 +121,7 @@ function Contact() {
           font-family: 'Inter', sans-serif;
         }
 
+        /* ── Circuit grid ── */
         .contact-circuit-grid {
           position: absolute; inset: 0;
           background-image:
@@ -130,6 +130,7 @@ function Contact() {
           background-size: 64px 64px; pointer-events: none;
         }
 
+        /* ── Mouse orb ── */
         .contact-orb {
           position: absolute; width: 640px; height: 640px; border-radius: 50%;
           background: radial-gradient(circle, rgba(124,58,237,0.13) 0%, rgba(168,85,247,0.05) 45%, transparent 70%);
@@ -137,6 +138,7 @@ function Contact() {
           transition: left 0.9s cubic-bezier(0.2,0,0.2,1), top 0.9s cubic-bezier(0.2,0,0.2,1);
         }
 
+        /* Static ambient orbs */
         .contact-orb-tl {
           position: absolute; top: -100px; left: -80px;
           width: 420px; height: 420px; border-radius: 50%;
@@ -152,11 +154,13 @@ function Contact() {
         @keyframes floatA { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
         @keyframes floatB { 0%,100%{transform:translateY(0)} 50%{transform:translateY(14px)} }
 
+        /* ── Circuit SVG ── */
         .contact-circuit-svg {
           position: absolute; inset: 0; width: 100%; height: 100%;
           pointer-events: none; opacity: 0.15;
         }
 
+        /* ── Corner brackets ── */
         .contact-corner {
           position: absolute; width: 40px; height: 40px;
           pointer-events: none; opacity: 0;
@@ -168,6 +172,7 @@ function Contact() {
         .contact-corner.bl { bottom: 40px; left: 40px; border-bottom: 1px solid var(--pu-line); border-left: 1px solid var(--pu-line); }
         .contact-corner.br { bottom: 40px; right: 40px; border-bottom: 1px solid var(--pu-line); border-right: 1px solid var(--pu-line); }
 
+        /* ── Inner layout ── */
         .contact-inner {
           max-width: 1040px; margin: 0 auto;
           padding: 0 48px; position: relative; z-index: 1;
@@ -175,12 +180,14 @@ function Contact() {
           gap: 80px; align-items: start;
         }
 
+        /* ── Left column ── */
         .contact-left {
           opacity: 0; transform: translateX(-28px);
           transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
         }
         .contact-left.visible { opacity: 1; transform: translateX(0); }
 
+        /* Eyebrow pill */
         .contact-eyebrow {
           display: flex; align-items: center; gap: 10px;
           margin-bottom: 32px;
@@ -204,6 +211,7 @@ function Contact() {
           letter-spacing: 0.22em; text-transform: uppercase; color: var(--pu-bright);
         }
 
+        /* Headline */
         .contact-headline {
           font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(34px, 4.2vw, 54px);
@@ -221,6 +229,7 @@ function Contact() {
           color: var(--text-dim); margin-bottom: 44px;
         }
 
+        /* Info rows */
         .contact-info { display: flex; flex-direction: column; }
 
         .contact-info-row {
@@ -262,6 +271,7 @@ function Contact() {
         }
         .contact-info-row:hover .contact-info-value { color: var(--text); }
 
+        /* Social row */
         .contact-social {
           display: flex; gap: 10px; margin-top: 28px;
           flex-wrap: wrap;
@@ -279,12 +289,14 @@ function Contact() {
           color: var(--pu-bright); box-shadow: 0 0 12px rgba(124,58,237,0.25);
         }
 
+        /* ── Right — Form ── */
         .contact-right {
           opacity: 0; transform: translateX(28px);
           transition: opacity 0.7s ease 0.25s, transform 0.7s ease 0.25s;
         }
         .contact-right.visible { opacity: 1; transform: translateX(0); }
 
+        /* Form card */
         .contact-form-card {
           background: rgba(13,0,32,0.6);
           border: 1px solid var(--border);
@@ -293,6 +305,7 @@ function Contact() {
           box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,58,237,0.08);
           position: relative; overflow: hidden;
         }
+        /* Glow top border on form card */
         .contact-form-card::before {
           content: '';
           position: absolute; top: 0; left: 0; right: 0; height: 1px;
@@ -301,6 +314,7 @@ function Contact() {
 
         .contact-form { display: flex; flex-direction: column; gap: 22px; }
 
+        /* Field */
         .contact-field { position: relative; }
 
         .contact-field-label {
@@ -330,6 +344,7 @@ function Contact() {
           box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
         }
 
+        /* Focus bar */
         .contact-field-bar {
           position: absolute; bottom: 0; left: 8px;
           height: 2px; width: 0; border-radius: 2px;
@@ -338,13 +353,15 @@ function Contact() {
         }
         .contact-field.is-focused .contact-field-bar { width: calc(100% - 16px); }
 
+        /* Error message */
         .contact-error {
           color: var(--error);
           font-size: 12px;
-          margin-top: 8px;
-          padding: 8px 0;
+          margin-top: -10px;
+          padding: 0 8px;
         }
 
+        /* Submit */
         .contact-submit {
           position: relative; width: 100%;
           font-family: 'Inter', sans-serif;
@@ -371,6 +388,7 @@ function Contact() {
         .contact-submit:active { transform: translateY(0); }
         .contact-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
+        /* Spinner */
         .contact-spinner {
           width: 15px; height: 15px;
           border: 2px solid rgba(255,255,255,0.3);
@@ -379,6 +397,7 @@ function Contact() {
         }
         @keyframes cSpin { to { transform: rotate(360deg); } }
 
+        /* ── Success ── */
         .contact-success {
           display: flex; flex-direction: column;
           align-items: center; justify-content: center;
@@ -413,6 +432,7 @@ function Contact() {
           line-height: 1.8;
         }
 
+        /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
           .contact-inner {
             grid-template-columns: 1fr;
@@ -447,6 +467,7 @@ function Contact() {
         ref={sectionRef}
         onMouseMove={handleMouseMove}
       >
+        {/* Background layers */}
         <div className="contact-circuit-grid" />
         <div className="contact-orb-tl" />
         <div className="contact-orb-br" />
@@ -456,6 +477,7 @@ function Contact() {
           style={{ left: `${mousePos.x}%`, top: `${mousePos.y}%` }}
         />
 
+        {/* Circuit lines */}
         <svg className="contact-circuit-svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
           <path d="M0 150 L180 150 L180 280 L420 280" stroke="rgba(124,58,237,0.6)" strokeWidth="1" fill="none"
             strokeDasharray="500" strokeDashoffset="500">
@@ -471,12 +493,14 @@ function Contact() {
           </path>
         </svg>
 
+        {/* Corner brackets */}
         {["tl","tr","bl","br"].map(c => (
           <div key={c} className={`contact-corner ${c} ${inView ? "visible" : ""}`} />
         ))}
 
         <div className="contact-inner">
 
+          {/* ── Left ── */}
           <div className={`contact-left ${inView ? "visible" : ""}`}>
             <div className="contact-eyebrow">
               <div className="contact-eyebrow-pill">
@@ -513,6 +537,7 @@ function Contact() {
               ))}
             </div>
 
+            {/* Social buttons - Instagram added */}
             <div className="contact-social">
               {socialButtons.map((social) => (
                 <button 
@@ -527,6 +552,7 @@ function Contact() {
             </div>
           </div>
 
+          {/* ── Right — Form ── */}
           <div className={`contact-right ${inView ? "visible" : ""}`}>
             {submitted ? (
               <div className="contact-form-card">
@@ -541,7 +567,7 @@ function Contact() {
               </div>
             ) : (
               <div className="contact-form-card">
-                <form className="contact-form" onSubmit={handleSubmit}>
+                <div className="contact-form">
                   {fields.map((field) => (
                     <div
                       key={field.id}
@@ -557,7 +583,6 @@ function Contact() {
                           onFocus={() => setFocused(field.id)}
                           onBlur={() => setFocused(null)}
                           onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
-                          required
                         />
                       ) : (
                         <input
@@ -568,7 +593,6 @@ function Contact() {
                           onFocus={() => setFocused(field.id)}
                           onBlur={() => setFocused(null)}
                           onChange={(e) => setForm({ ...form, [field.id]: e.target.value })}
-                          required
                         />
                       )}
                       <div className="contact-field-bar" />
@@ -580,8 +604,8 @@ function Contact() {
                   )}
 
                   <button
-                    type="submit"
                     className="contact-submit"
+                    onClick={handleSubmit}
                     disabled={sending || !form.name || !form.email || !form.message}
                     aria-label="Start a conversation with our team"
                   >
@@ -591,7 +615,7 @@ function Contact() {
                       <>Send Message <span>→</span></>
                     )}
                   </button>
-                </form>
+                </div>
               </div>
             )}
           </div>
