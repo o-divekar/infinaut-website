@@ -63,14 +63,6 @@ app.use((req, res, next) => {
 // ============================================
 // STATIC FILE SERVING (PRODUCTION ONLY)
 // ============================================
-if (process.env.NODE_ENV === 'production') {
-  const clientBuildPath = path.join(__dirname, '../client/build');
-  app.use(express.static(clientBuildPath));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.resolve(clientBuildPath, 'index.html'));
-  });
-}
 
 // ============================================
 // GMAIL TRANSPORTER
